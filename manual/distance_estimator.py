@@ -36,7 +36,7 @@ rad1 = xr.open_mfdataset(glob.glob(file_root + channel1 + date + fname_root),
 rad2 = xr.open_mfdataset(glob.glob(file_root + channel1 + date2 + fname_root),
                          combine="nested", concat_dim="t")["var1"].sel(lon=slice(lon1, lon2),
                                                                        lat=slice(lat1, lat2))
-data = [rad2, rad1, rad1, rad1]
+data = [rad2, rad1, rad1, rad1, rad1]
 
 '''
 # ACMC (cloud mask)
@@ -80,10 +80,10 @@ def plotring(data, ax, camlat, camlon, title):
     return
 
 
-fig, axs = plt.subplots(2, 2, figsize=(20, 10))
-axes_list=[(0,0),(0,1),(1,0),(1,1)]
+fig, axs = plt.subplots(3, 2, figsize=(10, 40))
+axes_list=[(0,0),(0,1),(1,0),(1,1),(2,0)]
 proj_wgs84 = pyproj.Proj('+proj=longlat +datum=WGS84')
-for i in range(4):
+for i in range(5):
     plotring(data[i][index[i]], axs[axes_list[i]], camlat[i], camlon[i], dates[i])
 
 # https://gis.stackexchange.com/questions/289044/creating-buffer-circle-x-kilometers-from-point-using-python
