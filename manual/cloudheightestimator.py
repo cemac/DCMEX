@@ -62,7 +62,7 @@ df3 = pd.DataFrame(columns=['Time', 'distance_to_cloud', 'CB1', 'CB2', 'CB3', 'C
 for i in range(5):
     CB1 = find_height(df["CB1"][i], df["distance_min"]
                       [i], F, SH) + camera_height
-    CB2 = find_height(df["CB3"][i], df["distance_min"]
+    CB2 = find_height(df["CB2"][i], df["distance_min"]
                       [i], F, SH) + camera_height
     CB3 = find_height(df["CB3"][i], df["distance_min"]
                       [i], F, SH) + camera_height
@@ -78,7 +78,7 @@ for i in range(5):
 for i in range(5):
     CB1 = find_height(df["CB1"][i], df["distance_max"]
                       [i], F, SH) + camera_height
-    CB2 = find_height(df["CB3"][i], df["distance_max"]
+    CB2 = find_height(df["CB2"][i], df["distance_max"]
                       [i], F, SH) + camera_height
     CB3 = find_height(df["CB3"][i], df["distance_max"]
                       [i], F, SH) + camera_height
