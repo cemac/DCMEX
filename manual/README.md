@@ -30,6 +30,7 @@
 These contain the following information
 
 * **Time** Date and time of camera image
+* **distance to cloud** (in km)
 * **CBX** Cloud base above sea level (in km)
 * **CTX** Cloud top above sea level (in km)
 
