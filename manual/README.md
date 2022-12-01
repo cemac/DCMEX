@@ -1,12 +1,12 @@
 # Manual Calculations
 
 * [distance_estimator.py](distance_estimator.py) plots 1km rings on to re-gridded GEOS data (different channels and times/dates available)
-* [cloudheightestimator.py](cloudheightestimator.py) Reads [cloud_distance_and_pixel_height.csv](cloud_distance_and_pixel_height.csv) to pass into the height estimator that calculates the height relative to the camera using information about the camera, pixel height and distance to object in frame.
+* [cloudheightestimator.py](cloudheightestimator.py) Reads [cloud_distance_and_pixel_height.csv](pixel_data/cloud_distance_and_pixel_height.csv) to pass into the height estimator that calculates the height relative to the camera using information about the camera, pixel height and distance to object in frame.
 
 
 # Input Data
 
-[cloud_distance_and_pixel_height.csv](cloud_distance_and_pixel_height.csv) contains the following information:
+[cloud_distance_and_pixel_height.csv](pixel_data/cloud_distance_and_pixel_height.csv) contains the following information:
 
 * **Time** Date Time to nearest min of image
 * **camera** Camera 1 or 2
@@ -25,7 +25,7 @@
 
 [cloudheightestimator.py](cloudheightestimator.py) outputs two CSV files:
 
-[cloud_heights_using_max_distance.csv](cloud_heights_using_max_distance.csv) & [cloud_heights_using_min_distance.csv](cloud_heights_using_min_distance.csv)
+[cloud_heights_using_max_distance.csv](results/cloud_heights_using_max_distance.csv) & [cloud_heights_using_min_distance.csv](results/cloud_heights_using_min_distance.csv)
 
 These contain the following information
 
@@ -36,7 +36,7 @@ These contain the following information
 * Cloud Base Height Range: 5.5km -8.5km
 * Cloud Top Height Range: 7.02km - 13.11 km
 
-Maximum distances produced much higher cloud heights (~ 1km increase) indicating the need to get better distance estimates. 
+Maximum distances produced much higher cloud heights (~ 1km increase) indicating the need to get better distance estimates.
 
 ## To do
 
