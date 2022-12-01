@@ -25,9 +25,13 @@ camlon = [-106.898107, -106.898355, -106.898280, -106.898235, -106.898220]
 camlat = [34.023982, 34.023910, 34.023910, 34.024008, 34.024018]
 dates = ['2022-07-25-1704', '2022-07-31-1732',
          '2022-07-31-1733', '2022-07-31-1737', '2022-07-31-1741']
+# Index of nearest time: todo: code up nearet time selector
 index = [0, 6, 7, 7, 8]
-clourlist = ['whitesmoke', 'gray', 'khaki', 'steelblue', 'seagreen', 'aqua', 'orchid', 'firebrick', 'w', 'k', 'y', 'b', 'g', 'c', 'm', 'r']
-distance = [24, 25, 26, 27, 28,   29,  30,  31,  32,  33,  34, 35, 36, 37, 38, 39 ]
+# TODO: create csv of colours and kms to load in
+clourlist = ['whitesmoke', 'gray', 'khaki', 'steelblue', 'seagreen',
+             'aqua', 'orchid', 'firebrick', 'w', 'k', 'y', 'b', 'g', 'c', 'm', 'r']
+distance = [24, 25, 26, 27, 28,   29,  30,
+            31,  32,  33,  34, 35, 36, 37, 38, 39]
 
 # Visible radar
 rad1 = xr.open_mfdataset(glob.glob(file_root + channel1 + date + fname_root),
@@ -67,6 +71,8 @@ def geodesic_point_buffer(lat, lon, km):
     return transform(project, buf).exterior.coords.xy
 
 # Plot data, camera and distance rings
+
+
 def plotring(data, ax, camlat, camlon, title):
     data.plot.pcolormesh(x="lon", y="lat", ax=ax)
     ax.scatter(camlon, camlat, color='r')
@@ -81,10 +87,11 @@ def plotring(data, ax, camlat, camlon, title):
 
 
 fig, axs = plt.subplots(3, 2, figsize=(10, 40))
-axes_list=[(0,0),(0,1),(1,0),(1,1),(2,0)]
+axes_list = [(0, 0), (0, 1), (1, 0), (1, 1), (2, 0)]
 proj_wgs84 = pyproj.Proj('+proj=longlat +datum=WGS84')
 for i in range(5):
-    plotring(data[i][index[i]], axs[axes_list[i]], camlat[i], camlon[i], dates[i])
+    plotring(data[i][index[i]], axs[axes_list[i]],
+             camlat[i], camlon[i], dates[i])
 
 # https://gis.stackexchange.com/questions/289044/creating-buffer-circle-x-kilometers-from-point-using-python
 plt.tight_layout()
