@@ -14,4 +14,4 @@ Record_of_camera_angles.ods
 
 # Sample Directory
 
-Sample Images and OutPut will be hosted on GitHub for quick access and reproducibility
+Sample camera Images and re-gridded GEOS png on GitHub for reference
