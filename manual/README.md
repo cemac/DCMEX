@@ -33,6 +33,8 @@ These contain the following information
 * **CBX** Cloud base above sea level (in km)
 * **CTX** Cloud top above sea level (in km)
 
+The height of the camera above sea level has been added to the height estimates to give cloud heights above sea level
+
 * Cloud Base Height Range: 5.5km -8.5km
 * Cloud Top Height Range: 7.02km - 13.11 km
 
@@ -54,3 +56,7 @@ If this method looks viable pursue automation:
 2. Auto cloud detection and distance estimation from GEOS data
 
 This would be feasible in the time frame and work for other data sets.
+
+## Other Notes
+
+* Selection of Points. Set points along frame or tracking cloud features? the latter might be very tricky in automation steps?
