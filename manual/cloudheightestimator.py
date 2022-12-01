@@ -42,8 +42,8 @@ camera_height = 1.45
 
 def find_height(P, D, F, SH):
     OHS = find_OHS(P, SH)
-    H = (D*10**3 * OHS) / F
-    return round(H/10**3,2)
+    H = (D * 10**3 * OHS) / F
+    return round(H / 10**3, 2)
 
 # Object height on sensor =  (Sensor height (mm) × Object height (pixels)) / Sensor height (pixels)
 # SHP = 24*10**-3 / 5.73*10**-6
@@ -52,12 +52,13 @@ def find_height(P, D, F, SH):
 def find_OHS(P, SH):
     SHP = 4188
     OHS = (SH * P / SHP)
-    return  OHS
+    return OHS
+
 
 # Read in distance in km
 df = pd.read_csv('pixel_data/cloud_distance_and_pixel_height.csv')
-df2 = pd.DataFrame(columns=['Time', 'CB1', 'CB2', 'CB3', 'CT1', 'CT2', 'CT3'])
-df3 = pd.DataFrame(columns=['Time', 'CB1', 'CB2', 'CB3', 'CT1', 'CT2', 'CT3'])
+df2 = pd.DataFrame(columns=['Time', 'distance_to_cloud', 'CB1', 'CB2', 'CB3', 'CT1', 'CT2', 'CT3'])
+df3 = pd.DataFrame(columns=['Time', 'distance_to_cloud', 'CB1', 'CB2', 'CB3', 'CT1', 'CT2', 'CT3'])
 for i in range(5):
     CB1 = find_height(df["CB1"][i], df["distance_min"]
                       [i], F, SH) + camera_height
@@ -71,7 +72,8 @@ for i in range(5):
                       [i], F, SH) + camera_height
     CT3 = find_height(df["CT3"][i], df["distance_min"]
                       [i], F, SH) + camera_height
-    df2.loc[i] = [df["Time"][i], CB1, CB2, CB3, CT1, CT2, CT3]
+    df2.loc[i] = [df["Time"][i], df["distance_min"][i], CB1, CB2, CB3, CT1,
+                  CT2, CT3]
 
 for i in range(5):
     CB1 = find_height(df["CB1"][i], df["distance_max"]
@@ -86,7 +88,8 @@ for i in range(5):
                       [i], F, SH) + camera_height
     CT3 = find_height(df["CT3"][i], df["distance_max"]
                       [i], F, SH) + camera_height
-    df3.loc[i] = [df["Time"][i], CB1, CB2, CB3, CT1, CT2, CT3]
+    df3.loc[i] = [df["Time"][i], df["distance_max"]
+                  [i], CB1, CB2, CB3, CT1, CT2, CT3]
 
 df2.to_csv('results/cloud_heights_using_min_distance.csv')
 df3.to_csv('results/cloud_heights_using_max_distance.csv')
