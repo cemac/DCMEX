@@ -28,7 +28,7 @@ import pandas as pd
 # Distance from camera to object (m)
 D = 1000
 # Focal Length (mm)
-F = 50
+F = 50 # find out accuracy
 # Sensor height = 35.9 x 24 mm so 24mm high
 SH = 24
 # Image width x height: 6240 x 4160
@@ -46,8 +46,9 @@ def find_height(P, D, F, SH):
     return round(H / 10**3, 2)
 
 # Object height on sensor =  (Sensor height (mm) × Object height (pixels)) / Sensor height (pixels)
+# Sensor height (px) = Sensor height (mm) / distance between pixels
 # SHP = 24*10**-3 / 5.73*10**-6
-
+# SHP = 4188
 
 def find_OHS(P, SH):
     SHP = 4188
