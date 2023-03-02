@@ -48,10 +48,10 @@ def find_height(P, D, F, SH):
 # Object height on sensor =  (Sensor height (mm) × Object height (pixels)) / Sensor height (pixels)
 # Sensor height (px) = Sensor height (mm) / distance between pixels
 # SHP = 24*10**-3 / 5.73*10**-6
-# SHP = 4188
+# SHP = 4179 # taken from sensor resolution equation https://www.digicamdb.com/specs/canon_eos-6d-mark-ii/#sen_res
 
 def find_OHS(P, SH):
-    SHP = 4188
+    SHP = 4179
     OHS = (SH * P / SHP)
     return OHS
 
