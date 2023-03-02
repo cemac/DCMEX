@@ -61,13 +61,13 @@ def pitch_adjust(F,P,H, camera_height):
     # https://www.researchgate.net/publication/287515600_Height_estimation_from_a_single_camera_view
     pnew = (F * (  H * math.cos(math.radians(P)) - F * math.sin(math.radians(P))) /
          ( H * math.sin(math.radians(P)) + F * math.cos(math.radians(P)) ) )
-    return pnew, cnew
+    return pnew
 
 # Read in distance in km
 df = pd.read_csv('pixel_data/known_objects.csv')
 df2 = pd.DataFrame(columns=['Time', 'distance', 'est_height', 'actual_height'])
 for i in range(2):
-    pnew, cnew =  pitch_adjust(F, -df["pitch"][i], df["pixel_height"][i], camera_height)
+    pnew =  pitch_adjust(F, -df["pitch"][i], df["pixel_height"][i], camera_height)
     # Calculate height with out pixel adjust
     h = find_height(df["pixel_height"][i], (df["GD_min"][i])*1000,
                      F, SH) + camera_height * 1000
