@@ -74,7 +74,7 @@ def pitch_correct(P, FOV, h):
 
 # Read in distance in km
 df = pd.read_csv('pixel_data/known_objects.csv')
-df2 = pd.DataFrame(columns=['Time', 'distance', 'est_height','pitch_corrected', 'actual_height'])
+df2 = pd.DataFrame(columns=['Time', 'distance (km)', 'est_height','pitch_corrected', 'actual_height'])
 for i in range(2):
     # fight height on inclinded image plane
     D = geopy.distance.geodesic((camlat,camlon),(df["lat"][i],df["lon"][i]))
@@ -83,8 +83,8 @@ for i in range(2):
     # correct for pitch
     h_pc = pitch_correct(df["pitch"][i], FOV, h)
 
-    df2.loc[i] = [df["object"][i],D.km, h + camera_height * 1000,
-                  h_pc + camera_height * 1000, df["actual_height"][i]]
+    df2.loc[i] = [df["object"][i],round(D.km,2), int(h + camera_height * 1000),
+                  int(h_pc + camera_height * 1000), df["actual_height"][i]]
 
 
 df2.to_csv('results/known_objects_pitch_corrected_success.csv')
