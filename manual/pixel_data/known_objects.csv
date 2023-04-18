@@ -1,3 +1,3 @@
 object,lat,lon,GD_min,GD_max,actual_height,pixel_height,pixel_range,pitch
-MRO,33.5905,107.1121,27,28,3235,888,10,14.5
-Circular_building,34.0129,106.5536,2,3,1526,442,10,14.5
+MRO,33.9847618,-107.1893769,27,28,3235,888,10,14.5
+Circular_building,34.0248532,-106.9267249,2,3,1526,442,10,14.5

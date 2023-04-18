@@ -17,6 +17,7 @@
 """
 import pandas as pd
 import math
+import geopy.distance
 # Variables
 
 # Camera info
@@ -41,6 +42,9 @@ FOV = 27
 
 # equations from: https://www.scantips.com/lights/fieldofviewmath.html might need to find a text book referece!
 
+# List of camera locations from files, dates, corresponding frame, ring colours and distances
+camlon = -106.898107
+camlat = 34.023982
 
 def find_height(P, D, F, SH):
     OHS = find_OHS(P, SH)
@@ -73,12 +77,13 @@ df = pd.read_csv('pixel_data/known_objects.csv')
 df2 = pd.DataFrame(columns=['Time', 'distance', 'est_height','pitch_corrected', 'actual_height'])
 for i in range(2):
     # fight height on inclinded image plane
-    h = find_height(df["pixel_height"][i], (df["GD_min"][i])*1000,
+    D = geopy.distance.geodesic((camlat,camlon),(df["lat"][i],df["lon"][i]))
+    h = find_height(df["pixel_height"][i], D.m,
                      F, SH)
     # correct for pitch
     h_pc = pitch_correct(df["pitch"][i], FOV, h)
 
-    df2.loc[i] = [df["object"][i],df["GD_max"][i],h + camera_height * 1000,
+    df2.loc[i] = [df["object"][i],D.km, h + camera_height * 1000,
                   h_pc + camera_height * 1000, df["actual_height"][i]]
 
 

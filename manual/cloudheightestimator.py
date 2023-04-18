@@ -16,6 +16,7 @@
 
 """
 import pandas as pd
+import math
 
 # Variables
 
@@ -37,6 +38,13 @@ SH = 24
 camera_height = 1.45
 # Height = (Distance to Object x Object height on sensor) / Focal Length
 
+FOV = 27
+
+# equations from: https://www.scantips.com/lights/fieldofviewmath.html might need to find a text book referece!
+
+# List of camera locations from files, dates, corresponding frame, ring colours and distances
+camlon = -106.898107
+camlat = 34.023982
 # equations from: https://www.scantips.com/lights/fieldofviewmath.html might need to find a text book referece!
 
 
@@ -48,12 +56,23 @@ def find_height(P, D, F, SH):
 # Object height on sensor =  (Sensor height (mm) × Object height (pixels)) / Sensor height (pixels)
 # Sensor height (px) = Sensor height (mm) / distance between pixels
 # SHP = 24*10**-3 / 5.73*10**-6
-# SHP = 4179 # taken from sensor resolution equation https://www.digicamdb.com/specs/canon_eos-6d-mark-ii/#sen_res
+# SHP = 4188
 
 def find_OHS(P, SH):
-    SHP = 4179
+    SHP = 4188
     OHS = (SH * P / SHP)
     return OHS
+
+def pitch_correct(P, FOV, h):
+    # See diagram for agles a, b and c
+    a = 90 - P - FOV/2
+    b = 180 - 90 - FOV/2
+    # image plane incline from vertical
+    c = 180 - a - b
+    # x is true height, h is height on incled place
+    x = h * math.cos(math.radians(c))
+    return x
+
 
 
 # Read in distance in km
@@ -61,36 +80,25 @@ df = pd.read_csv('pixel_data/cloud_distance_and_pixel_height.csv')
 df2 = pd.DataFrame(columns=['Time', 'distance_to_cloud', 'CB1', 'CB2', 'CB3', 'CT1', 'CT2', 'CT3'])
 df3 = pd.DataFrame(columns=['Time', 'distance_to_cloud', 'CB1', 'CB2', 'CB3', 'CT1', 'CT2', 'CT3'])
 for i in range(5):
-    CB1 = find_height(df["CB1"][i], df["distance_min"]
-                      [i], F, SH) + camera_height
-    CB2 = find_height(df["CB2"][i], df["distance_min"]
-                      [i], F, SH) + camera_height
-    CB3 = find_height(df["CB3"][i], df["distance_min"]
-                      [i], F, SH) + camera_height
-    CT1 = find_height(df["CT1"][i], df["distance_min"]
-                      [i], F, SH) + camera_height
-    CT2 = find_height(df["CT2"][i], df["distance_min"]
-                      [i], F, SH) + camera_height
-    CT3 = find_height(df["CT3"][i], df["distance_min"]
-                      [i], F, SH) + camera_height
+    h = find_height(df["CB1"][i], df["distance_min"]
+                      [i], F, SH)
+    CB1 = round(pitch_correct(df["pitch"][i], FOV, h) + camera_height, 2)
+    h = find_height(df["CB2"][i], df["distance_min"]
+                      [i], F, SH)
+    CB2 = round(pitch_correct(df["pitch"][i], FOV, h) + camera_height, 2)
+    h = find_height(df["CB3"][i], df["distance_min"]
+                      [i], F, SH)
+    CB3 = round(pitch_correct(df["pitch"][i], FOV, h) + camera_height, 2)
+    h = find_height(df["CT1"][i], df["distance_min"]
+                      [i], F, SH)
+    CT1 = round(pitch_correct(df["pitch"][i], FOV, h) + camera_height, 2)
+    h = find_height(df["CT2"][i], df["distance_min"]
+                      [i], F, SH)
+    CT2 = round(pitch_correct(df["pitch"][i], FOV, h) + camera_height, 2)
+    h = find_height(df["CT3"][i], df["distance_min"]
+                      [i], F, SH)
+    CT3 = round(pitch_correct(df["pitch"][i], FOV, h) + camera_height, 2)
     df2.loc[i] = [df["Time"][i], df["distance_min"][i], CB1, CB2, CB3, CT1,
                   CT2, CT3]
 
-for i in range(5):
-    CB1 = find_height(df["CB1"][i], df["distance_max"]
-                      [i], F, SH) + camera_height
-    CB2 = find_height(df["CB2"][i], df["distance_max"]
-                      [i], F, SH) + camera_height
-    CB3 = find_height(df["CB3"][i], df["distance_max"]
-                      [i], F, SH) + camera_height
-    CT1 = find_height(df["CT1"][i], df["distance_max"]
-                      [i], F, SH) + camera_height
-    CT2 = find_height(df["CT2"][i], df["distance_max"]
-                      [i], F, SH) + camera_height
-    CT3 = find_height(df["CT3"][i], df["distance_max"]
-                      [i], F, SH) + camera_height
-    df3.loc[i] = [df["Time"][i], df["distance_max"]
-                  [i], CB1, CB2, CB3, CT1, CT2, CT3]
-
-df2.to_csv('results/cloud_heights_using_min_distance.csv')
-df3.to_csv('results/cloud_heights_using_max_distance.csv')
+df2.to_csv('results/cloud_heights_using_min_distance_pitch_corr.csv')
