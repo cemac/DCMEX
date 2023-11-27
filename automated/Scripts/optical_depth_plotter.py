@@ -23,12 +23,30 @@ import haversine as hs
 import math
 
 
-date_to_use = '2022-07-31'
-fnames = glob.glob(
-    'GWS/DCMEX/data/stereocams/date_to_use/secondary_red/amof-cam-2-date_to_use-*.jpg')
+date_to_use = '2022-07-30'
 storage = '/home/users/hburns/GWS/DCMEX/users/hburns/'
+imgroot = str(storage + "images/FOV_on_optical_depth/"+date_to_use+'/')
+dataroot = '/gws/nopw/j04/dcmex/data'
+if not os.path.exists(imgroot):
+       # If it doesn't exist, create it
+       os.makedirs(imgroot)
+
+if not os.path.exists(storage+'results/'+date_to_use+'/'):
+       os.makedirs(storage+'results/'+date_to_use+'/')
+
+cam_details = storage + '/camera_details.csv'
+cam_df = pd.read_csv(cam_details)
+camera=2
+if camera==2:
+    fnames = glob.glob(
+    dataroot+'/stereocams/'+date_to_use+'/secondary_red/amof-cam-2-'+date_to_use+'-*.jpg')
+else:
+ fnames = glob.glob(
+    dataroot+'/stereocams/'+date_to_use+'/primary_blue/amof-cam-1-'+date_to_use+'-*.jpg')
 yaw_error = 10
+
 date_list = []
+date_list2 = []
 time_list = []
 for file_name in fnames:
     parts = os.path.splitext(os.path.basename(file_name))[0].split('-')
@@ -36,19 +54,27 @@ for file_name in fnames:
     date_time = datetime.strptime(
         f"{yyyy}-{mm}-{dd}-{hhmmss}", "%Y-%m-%d-%H%M%S")
     # Formatting date and time
-    formatted_date = date_time.strftime("%Y-%m-%d")
+    formatted_date = date_time.strftime("%d-%m-%Y")
+    formatted_date2 = date_time.strftime("%Y-%m-%d")
     formatted_time = date_time.strftime("%H%M")
     date_list.append(formatted_date)
+    date_list2.append(formatted_date2)
     time_list.append(formatted_time)
 
 date_fnames = list(set(date_list))
-cam_details = storage + '/camera_details.csv'
-cam_df = pd.read_csv(cam_details)
+date_fnames2 = list(set(date_list2))    
+filtered_df = cam_df[(cam_df['Date'] == date_fnames[0])
+                     & (cam_df['camera'] == camera)]
+yaw_degrees = filtered_df.yaw.values[0]
+camlat = 34.0246#filtered_df.camlat.values[0]
+camlon = -106.8981#filtered_df.camlon.values[0]
+print('camlat',camlat)
+print(camlon)
 # Set Paramers to read in satelite data regridded into lat lon
 lat1 = 33.75
 lat2 = 34.25
 lon1 = -107.5
-lon2 = -106.9
+lon2 = -106.8
 file_root = "/gws/nopw/j04/dcmex/data/GOES16pcrgd/Magda/"
 channel1 = "ABI-L2-CODC/"
 # channel2 = "ABI-L2-ACMC/"
@@ -62,16 +88,12 @@ orog = xr.open_dataset(orog_file)['topo'].sel(
 southbaldy = [33.99, -107.19]
 MRO = [33.98481699, -107.18926709]
 CB = [34.0248532,-106.9267249]
-# List of camera locations from files, dates, corresponding frame, ring colours and distances
-camlon = -106.898107
-camlat = 34.023982
-
 
 # TODO: create csv of colours and kms to load in
 
 data = []
 
-for date in date_fnames:
+for date in date_fnames2:
     date_path = date.replace('-', '/', 3)
     rad = xr.open_mfdataset(glob.glob(file_root + channel1 + date_path + fname_root),
                             combine="nested", concat_dim="t")["var1"].sel(lon=slice(lon1, lon2),
@@ -172,13 +194,13 @@ def plotring(data, ax, camlat, camlon, yaw, title):
     masked_data.plot.pcolormesh(x="lon", y="lat", ax=ax, levels=[
                                 3.6, 9.4, 23, 60, 100], cbar_kwargs={'label': 'optical depth'})
     day1 = data.values
-    # valid_data = ~np.all(np.isnan(day1), axis=0)
+    valid_data = ~np.all(np.isnan(day1), axis=0)
     lons = data.coords['lon'].values
     lats = data.coords['lat'].values
     fov_x, fov_y = FOV_area(camlat, camlon, yaw, fov_horizontal_deg)
     # Yaw is plus minus 5 deg so add 10 deg to FOV
     fov_xp5, fov_yp5 = FOV_area(
-        camlat, camlon, yaw, fov_horizontal_deg + yaw_error)
+        camlat, camlon, yaw, fov_horizontal_deg +2*yaw_error)
     try:
         test = np.unravel_index(np.nanargmax(day1), day1.shape)
         if test:
@@ -225,7 +247,7 @@ def plotring(data, ax, camlat, camlon, yaw, title):
         D = 'no cloud'
         maxlat_2 = 'none'
         maxlon_2 = 'none'
-
+    
     ax.scatter(camlon, camlat, color='r', marker='D', s=400, label='Camera')
     ax.scatter(MRO[1], MRO[0], marker='+', color='k', s=200, label='MRO')
     ax.scatter(CB[1], CB[0], marker='+', color='k', s=150, label='CB')
@@ -245,11 +267,8 @@ plt.rcParams['font.size'] = 16
 
 distances = []
 datetimes = []
-filtered_df = cam_df[(cam_df['Date'] == date_fnames[0])
-                     & (cam_df['Camera'] == 2)]
-yaw_degrees = filtered_df.Yaw.values[0]
-camlat = filtered_df.camlat.values[0]
-camlon = filtered_df.camlat.values[0]
+CT_lat = []
+CT_lon = [] 
 # for j in range(len(data):
 for i in range(len(data[0].t)):
     timestamp = data[0].t[i].values
@@ -261,12 +280,13 @@ for i in range(len(data[0].t)):
                                          np.datetime_as_string(data[0].t[i].data, unit='m'))
         distances.append(D)
         datetimes.append(data[0].t[i].data)
-        # https://gis.stackexchange.com/questions/289044/creating-buffer-circle-x-kilometers-from-point-using-python
+        CT_lat.append(maxlat_2)
+        CT_lon.append(maxlon_2)
         plt.tight_layout()
-        imgroot = str(storage + "images/FOV_on_optical_depth/"+date_to_use+'/')
         plt.savefig(
             imgroot+np.datetime_as_string(data[0].t[i].data, unit='m')+'.png')
+        plt.close ('all')
 
-cloud_distances = pd.DataFrame({'Datetimes': datetimes, 'Distance': distances})
+cloud_distances = pd.DataFrame({'Datetimes': datetimes, 'Distance': distances, 'CT_lat': CT_lat, 'CT_lon':CT_lon})
 cloud_distances.to_csv(
     storage+'results/'+date_to_use+'/Cloud_distnaces.csv')
