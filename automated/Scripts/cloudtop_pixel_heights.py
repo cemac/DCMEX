@@ -1,11 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Mon Nov 27 16:01:32 2023
-
-@author: earhbu
-"""
-
 import glob
 import os
 import pandas as pd
@@ -17,10 +9,17 @@ from PIL import Image
 from skimage import color
 from skimage import io
 import cv2 as cv2
+import sys
+# Extract arguments
+camera = int(sys.argv[1])
+date_to_use = str(sys.argv[2])
 
-date_to_use = '2022-07-31'
+
+
+#date_to_use = '2022-07-22'
 storage = '/home/users/hburns/GWS/DCMEX/users/hburns/'
-imgroot = str(storage + "images/cloud_top_heights/"+date_to_use+'/')
+#camera=1
+imgroot = str(storage + "images/cloud_top_heights/"+date_to_use+'/'+str(camera)+'/')
 dataroot = '/gws/nopw/j04/dcmex/data'
 if not os.path.exists(imgroot):
        # If it doesn't exist, create it
@@ -32,29 +31,33 @@ if not os.path.exists(storage+'results/'+date_to_use+'/'):
 cam_details = storage + '/camera_details.csv'
 cam_df = pd.read_csv(cam_details)
 
-camera=2
+
 if camera==2:
     fnames = glob.glob(
     dataroot+'/stereocams/'+date_to_use+'/secondary_red/amof-cam-2-'+date_to_use+'-*.jpg')
-else: 
+else:
     fnames = glob.glob(
     dataroot+'/stereocams/'+date_to_use+'/primary_blue/amof-cam-1-'+date_to_use+'-*.jpg')
 
+
 date_list = []
 time_list = []
+hour_list = []
 for file_name in fnames:
     parts = os.path.splitext(os.path.basename(file_name))[0].split('-')
     yyyy,mm,dd,hhmmss = parts[3], parts[4], parts[5], parts[6] 
     date_time = datetime.strptime(f"{yyyy}-{mm}-{dd}-{hhmmss}", "%Y-%m-%d-%H%M%S")
     # Formatting date and time
     formatted_date = date_time.strftime("%Y-%m-%d")
-    formatted_time = date_time.strftime("%H%M")
+    formatted_time = date_time.strftime("%H%M%S")
+    formatted_hours = date_time.strftime("%H%M")
     date_list.append(formatted_date)
     time_list.append(formatted_time)
+    hour_list.append(formatted_hours)
 
 date_fnames = list(set(date_list))
 datetime_objects = []
-for date, time in zip(date_list, time_list):
+for date, time in zip(date_list, hour_list):
     # Combine date and time strings
     datetime_str = f'{date} {time[:2]}:{time[2:]}'
     
@@ -65,7 +68,7 @@ for date, time in zip(date_list, time_list):
     datetime_objects.append(dt_object)
 
 cloud_distances = pd.read_csv(
-    storage+'/results/'+date_to_use+'/Cloud_distnaces.csv')
+    storage+'/results/'+date_to_use+'/Cloud_distnaces_camera_'+str(camera)+'.csv')
 cloud_distances['Date_Time'] = pd.to_datetime(cloud_distances.Datetimes)
 
 def find_closest_index(target_date, date_array):
@@ -73,6 +76,8 @@ def find_closest_index(target_date, date_array):
 
 array1 = np.array([np.datetime64(dt) for dt in datetime_objects])
 closest_indices = [find_closest_index(dt, cloud_distances.Date_Time.values) for dt in array1]
+
+
 
 def find_contours(fname,ax, title):
     #img=Image.open(glob.glob(fname1)[0])
@@ -122,12 +127,12 @@ def find_contours(fname,ax, title):
     # Save the image with the three largest bounding boxes
     
     # Save the image with bounding boxes
-    cv2.imwrite('cloud_box.png', bounding_box_image)
+    cv2.imwrite(imgroot+'/'+title+'_cloud_box.png', bounding_box_image)
     cloud_edge2=Image.open('cloud_box.png')
-    ax.imshow(cloud_edge2)
-    ax.set_title(title)
-    plt.tight_layout()
-    plt.savefig(imgroot+'/'+title+'_cloud_box.png')
+    #ax.imshow(cloud_edge2)
+    #ax.set_title(title)
+    #plt.tight_layout()
+    #plt.savefig(imgroot+'/'+title+'_cloud_box.png')
     return y_max, h_max, y_max1, h_max1, x_max, x_max1, w_max, w_max1
 #cloud_edge2=Image.open('cloud_edge2.png')
 #plt.imshow(cloud_edge2)
@@ -154,7 +159,7 @@ for i in range(len(fnames)):
         continue
     fig, axs = plt.subplots(figsize=(20, 20))    
     y_max, h_max, y_max1, h_max1,x_max,x_max1,w_max, w_max1 = find_contours(fnames[i],axs,date_fnames[0]+'-'+time_list[i] + '_')
-    time_list2.append(time_list[index])
+    time_list2.append(time_list[index-1])
     cb1.append(4500-y_max1)
     ct1.append(4500-y_max1+h_max1)
     cb2.append(4500-y_max)
@@ -166,8 +171,8 @@ for i in range(len(fnames)):
     plt.close ('all')
 # https://gis.stackexchange.com/questions/289044/creating-buffer-circle-x-kilometers-from-point-using-python
 
-cloud_pixels = pd.DataFrame({'Times': time_list, 'CB1': cb1, 'CB2': cb2,
-                             'CT1': ct1, 'CT2': ct2,' CX1': cx1, 'CX2': cx2, 
+cloud_pixels = pd.DataFrame({'Times': time_list2, 'CB1': cb1, 'CB2': cb2,
+                             'CT1': ct1, 'CT2': ct2,'CX1': cx1, 'CX2': cx2, 
                              'W1': w1, 'W2': w2})
 #cloud_pixels.to_csv('/home/users/hburns/GWS/DCMEX/users/hburns/cloud_pixels.csv')
 cloud_pixels.to_csv(

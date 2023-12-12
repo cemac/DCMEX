@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 """
 Optical Depth Plotter
 
@@ -21,11 +23,14 @@ from shapely.geometry import Point
 import numpy as np
 import haversine as hs
 import math
-
-
-date_to_use = '2022-07-30'
+import sys
+# Extract arguments
+camera = int(sys.argv[1])
+date_to_use = str(sys.argv[2])
+#date_to_use = '2022-07-31'
+#camera=2
 storage = '/home/users/hburns/GWS/DCMEX/users/hburns/'
-imgroot = str(storage + "images/FOV_on_optical_depth/"+date_to_use+'/')
+imgroot = str(storage + "images/FOV_on_optical_depth/"+date_to_use+'/camera/'+str(camera)+'/')
 dataroot = '/gws/nopw/j04/dcmex/data'
 if not os.path.exists(imgroot):
        # If it doesn't exist, create it
@@ -36,7 +41,6 @@ if not os.path.exists(storage+'results/'+date_to_use+'/'):
 
 cam_details = storage + '/camera_details.csv'
 cam_df = pd.read_csv(cam_details)
-camera=2
 if camera==2:
     fnames = glob.glob(
     dataroot+'/stereocams/'+date_to_use+'/secondary_red/amof-cam-2-'+date_to_use+'-*.jpg')
@@ -52,7 +56,7 @@ for file_name in fnames:
     parts = os.path.splitext(os.path.basename(file_name))[0].split('-')
     yyyy, mm, dd, hhmmss = parts[3], parts[4], parts[5], parts[6]
     date_time = datetime.strptime(
-        f"{yyyy}-{mm}-{dd}-{hhmmss}", "%Y-%m-%d-%H%M%S")
+        f'{yyyy}-{mm}-{dd}-{hhmmss}', "%Y-%m-%d-%H%M%S")
     # Formatting date and time
     formatted_date = date_time.strftime("%d-%m-%Y")
     formatted_date2 = date_time.strftime("%Y-%m-%d")
@@ -66,10 +70,10 @@ date_fnames2 = list(set(date_list2))
 filtered_df = cam_df[(cam_df['Date'] == date_fnames[0])
                      & (cam_df['camera'] == camera)]
 yaw_degrees = filtered_df.yaw.values[0]
-camlat = 34.0246#filtered_df.camlat.values[0]
-camlon = -106.8981#filtered_df.camlon.values[0]
-print('camlat',camlat)
-print(camlon)
+camlat = filtered_df.camlat.values[0]
+camlon = filtered_df.camlon.values[0]
+print('camlat: ', camlat)
+print('camlon: ', camlon)
 # Set Paramers to read in satelite data regridded into lat lon
 lat1 = 33.75
 lat2 = 34.25
@@ -289,4 +293,4 @@ for i in range(len(data[0].t)):
 
 cloud_distances = pd.DataFrame({'Datetimes': datetimes, 'Distance': distances, 'CT_lat': CT_lat, 'CT_lon':CT_lon})
 cloud_distances.to_csv(
-    storage+'results/'+date_to_use+'/Cloud_distnaces.csv')
+    storage+'results/'+date_to_use+'/Cloud_distnaces_camera_'+str(camera)+'.csv')

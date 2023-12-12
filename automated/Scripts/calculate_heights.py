@@ -5,12 +5,18 @@ Created on Mon Nov 27 11:03:18 2023
 
 @author: earhbu
 """
-
 import pandas as pd
 import math
 from datetime import datetime
 import matplotlib.pyplot as plt
 import numpy as np
+from matplotlib.dates import DateFormatter
+
+import sys
+# Extract arguments
+camera = int(sys.argv[1])
+date_to_use = str(sys.argv[2])
+
 # Variables
 
 # Camera info
@@ -38,9 +44,10 @@ Dover Publications, 1989 - thin lens equations
 
 """
 
-date_to_use = '2022-07-31'
-date= '31-07-2022'
-camera=2
+#date_to_use = '2022-07-31'
+parts= date_to_use.split('-')
+date= parts[-1]+'-'+parts[1]+'-'+parts[0]
+#camera=2
 storage = '/home/users/hburns/GWS/DCMEX/users/hburns/'
 # Sensor dimensions
 sensor_height_mm = 24.0
@@ -71,14 +78,14 @@ camlat = 34.023982
 cam_details = storage+'/camera_details.csv'
 cam_df = pd.read_csv(cam_details)
 # Camera height above sea level
-camera_height = 1.45
+
 
 cloud_distances = pd.read_csv(
-    storage+'/results/'+date_to_use+'/Cloud_distnaces.csv')
+    storage+'/results/'+date_to_use+'/Cloud_distnaces_camera_'+str(camera)+'.csv')
 cloud_pixels = pd.read_csv(
-    storage+'/results/'+date_to_use+'/cloud_pixels.csv')
+    storage+'/results/'+date_to_use+'/cloud_pixels_camera_'+str(camera)+'.csv')
 date_format_distances = '%Y-%m-%dT%H:%M:%S'
-date_format_pixels = '%Y-%m-%dT%H%M'
+date_format_pixels = '%Y-%m-%dT%H%M%S'
 date_object_distances = datetime.strptime(
     cloud_distances.Datetimes.iloc[0].split('.')[0], date_format_distances)
 date_object_pixels = datetime.strptime(
@@ -150,27 +157,56 @@ camera_height = filtered_df.height.values[0]/1000
 # Read in distance in km
 df_filtered = df_filtered.reset_index(drop=True)
 df2 = pd.DataFrame(index=range(len(df_filtered)), columns=[
-                   'Time', 'distance_to_cloud', 'CT', 'CT2'])
+                   'Time', 'distance_to_cloud', 'CT', 'W','X'])
 i = 0
 for row in df_filtered.itertuples():
-    CT2 = 4500-row.CT
-    CT1 = 4500-row.CT1
+    CT2 = row.CT1
+    CT1 = row.CT2
     CT = np.nanmax([CT2, CT1])
+    if CT==CT1:
+        W=row.W1
+        X=row.CX1
+    else:
+        W=row.W2
+        X=row.CX2
     h = find_height(CT, row.Distance, F, SH)
-    h2 = find_height(CT, 24, F, SH)
     CB1 = round(pitch_correct(pitch, FOV, h) + camera_height, 2)
-    CB2 = round(pitch_correct(pitch, FOV, h2) + camera_height, 2)
+    
     df2.at[row.Index, 'Time'] = row.Date_Time
     df2.at[row.Index, 'distance_to_cloud'] = row.Distance
     df2.at[row.Index, 'CT'] = CB1
-    df2.at[row.Index, 'CT2'] = CB2
+    df2.at[row.Index, 'X'] = X
+    df2.at[row.Index, 'W'] = W
 
-
-# df2.to_csv('results/cloud_heights_using_min_distance_pitch_corr_pc_max_cloudtop_distance.csv')
-
+df2.to_csv(storage+'/results/'+date_to_use+'/'+date_to_use+'_camera_'+str(camera)+'_cloud_top_heights.csv')
+plt.rcParams['font.size'] = 16
 fig, axs = plt.subplots(figsize=(20, 20))
 plt.scatter(df2['Time'], df2['CT'], marker='o',)
-
+axs.xaxis.set_major_formatter(DateFormatter('%H:%M'))
+axs.set_xlabel('Time')
+axs.set_ylabel('Height (km)')
+axs.set_title('Max estimated cloud top height in photo for '+date+'\n camera: '+str(camera))
+plt.xticks(rotation=45)
 plt.savefig(storage + 'results/' + date_to_use + '/' +
             date_to_use + '_camera_'+str(camera)+'_cloud_top_height.png')
+plt.close('all')
+fig, axs = plt.subplots(figsize=(20, 20))
 plt.scatter(df2['Time'], df2['distance_to_cloud'], marker='o',)
+axs.xaxis.set_major_formatter(DateFormatter('%H:%M'))
+axs.set_xlabel('Time')
+axs.set_ylabel('Distance (km)')
+axs.set_title('Distance between camera and max optical depth for  '+date+'\n camera: '+str(camera))
+plt.xticks(rotation=45)
+plt.savefig(storage + 'results/' + date_to_use + '/' +
+            date_to_use + '_camera_'+str(camera)+'_distance_vs_time.png')
+plt.close('all')
+fig, axs = plt.subplots(figsize=(20, 20))
+plt.scatter(df2['Time'], df2['X']+df2['W']/2, marker='o',)
+axs.xaxis.set_major_formatter(DateFormatter('%H:%M'))
+axs.set_xlabel('Time')
+axs.set_ylabel('pixels from left corner')
+axs.set_title('Horizontal pixel co-ordinate for center of box round clound  '+date+'\n camera: '+str(camera))
+plt.xticks(rotation=45)
+plt.savefig(storage + 'results/' + date_to_use + '/' +
+            date_to_use + '_camera_'+str(camera)+'_horizontal_movement_vs_time.png')
+plt.close('all')
