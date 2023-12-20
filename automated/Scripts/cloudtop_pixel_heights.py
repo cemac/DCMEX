@@ -109,7 +109,19 @@ def find_contours(fname,ax, title):
             h_max1 = h
             max_max = rectanglea
     thickness = 16  # Adjust this value to control the thickness of the drawn contour 
-    cv2.rectangle(bounding_box_image, (x_max1, y_max1), (x_max1 + w_max1, y_max1 + h_max1), (0, 255, 0), thickness)
+    try:
+           cv2.rectangle(bounding_box_image, (x_max1, y_max1), (x_max1 + w_max1, y_max1 + h_max1), (0, 255, 0), thickness)
+    except:
+            x_max1 = 0
+            y_max1 = 0
+            w_max1 = 0
+            h_max1 = 0
+            x_max = 0
+            y_max = 0
+            w_max = 0
+            h_max = 0
+            print('no box')
+            return y_max, h_max, y_max1, h_max1, x_max, x_max1, w_max, w_max1
     # Save the image with the three largest bounding boxes
     max = 0
     for contour in sorted_contours:
@@ -148,22 +160,27 @@ w1=[]
 w2=[]
 time_list2=[]
 index=0
-for i in range(len(fnames)):    
+for i in range(len(fnames)):
     check=cloud_distances.Distance.iloc[closest_indices[index]]
     index+=1
     #print(cloud_distances.Distance.iloc[closest_indices[index]])
     #bin off data
-    if check == 'none':
+    if check == 'none' or check=='no cloud':
         continue
-    if check >30 or check <10:
-        continue
+    try:   
+           check = float(check)
+           if check >30 or check <10:
+                  continue
+    except TypeError:
+           print('error:', check)
+           continue
     fig, axs = plt.subplots(figsize=(20, 20))    
     y_max, h_max, y_max1, h_max1,x_max,x_max1,w_max, w_max1 = find_contours(fnames[i],axs,date_fnames[0]+'-'+time_list[i] + '_')
     time_list2.append(time_list[index-1])
-    cb1.append(4500-y_max1)
-    ct1.append(4500-y_max1+h_max1)
-    cb2.append(4500-y_max)
-    ct2.append(4500-y_max+h_max)
+    cb1.append(y_max1)
+    ct1.append(y_max1+h_max1)
+    cb2.append(y_max)
+    ct2.append(y_max+h_max)
     cx1.append(x_max)
     cx2.append(x_max1)
     w1.append(w_max)

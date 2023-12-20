@@ -117,7 +117,16 @@ for index, row in cloud_pixels.iterrows():
     if closest_file2 is not None:
         cloud_pixels['Distance'].iloc[index] = closest_file2.Distance
 
-condition = (cloud_pixels['Distance'] > 30) | (cloud_pixels['Distance'] < 10)
+
+
+try:
+    condition = (cloud_pixels['Distance'] > 30) | (cloud_pixels['Distance'] < 10)
+except TypeError:
+    cloud_pixels = cloud_pixels[cloud_pixels != 'no cloud']
+    cloud_pixels['Distance'] = pd.to_numeric(cloud_pixels['Distance'])
+    condition = (cloud_pixels['Distance'] > 30) | (cloud_pixels['Distance'] < 10) 
+
+
 df_filtered = cloud_pixels[~condition]
 
 
@@ -157,7 +166,7 @@ camera_height = filtered_df.height.values[0]/1000
 # Read in distance in km
 df_filtered = df_filtered.reset_index(drop=True)
 df2 = pd.DataFrame(index=range(len(df_filtered)), columns=[
-                   'Time', 'distance_to_cloud', 'CT', 'W','X'])
+                   'Time', 'distance_to_cloud', 'CT', 'CTP','CB', 'W','X'])
 i = 0
 for row in df_filtered.itertuples():
     CT2 = row.CT1
@@ -166,15 +175,21 @@ for row in df_filtered.itertuples():
     if CT==CT1:
         W=row.W1
         X=row.CX1
+        CB=row.CB2 
     else:
         W=row.W2
         X=row.CX2
-    h = find_height(CT, row.Distance, F, SH)
-    CB1 = round(pitch_correct(pitch, FOV, h) + camera_height, 2)
-    
+        CB=row.CB1
+    hb = find_height(4160-CT, row.Distance, F, SH)
+    ht = find_height(4160-CB, row.Distance, F, SH)
+    CTH = round(pitch_correct(pitch, FOV, ht) + camera_height, 2)
+    CBH = round(pitch_correct(pitch, FOV, hb) + camera_height, 2)
     df2.at[row.Index, 'Time'] = row.Date_Time
     df2.at[row.Index, 'distance_to_cloud'] = row.Distance
-    df2.at[row.Index, 'CT'] = CB1
+    df2.at[row.Index, 'CT'] = CTH
+    df2.at[row.Index, 'CB'] = CBH
+    df2.at[row.Index, 'CTP'] = CB
+    df2.at[row.Index, 'CBP'] = CT
     df2.at[row.Index, 'X'] = X
     df2.at[row.Index, 'W'] = W
 
