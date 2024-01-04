@@ -166,44 +166,95 @@ camera_height = filtered_df.height.values[0]/1000
 # Read in distance in km
 df_filtered = df_filtered.reset_index(drop=True)
 df2 = pd.DataFrame(index=range(len(df_filtered)), columns=[
-                   'Time', 'distance_to_cloud', 'CT', 'CTP','CB', 'W','X'])
+                   'Time', 'distance_to_cloud', 'CT1', 'CT2', 'CB1','CB2','CTP1','CTP2',
+                   'CBP1','CTBP2', 'W1','W2', 'X1','X2','MAXCTH'])
 i = 0
 for row in df_filtered.itertuples():
     CT2 = row.CT1
     CT1 = row.CT2
-    CT = np.nanmax([CT2, CT1])
-    if CT==CT1:
-        W=row.W1
-        X=row.CX1
-        CB=row.CB2 
-    else:
-        W=row.W2
-        X=row.CX2
-        CB=row.CB1
-    hb = find_height(4160-CT, row.Distance, F, SH)
-    ht = find_height(4160-CB, row.Distance, F, SH)
-    CTH = round(pitch_correct(pitch, FOV, ht) + camera_height, 2)
-    CBH = round(pitch_correct(pitch, FOV, hb) + camera_height, 2)
+    W1=row.W1
+    X1=row.CX1
+    CB1=row.CB1 
+    W2=row.W2
+    X2=row.CX2
+    CB2=row.CB2
+    hb1 = find_height(4160-CT1, row.Distance, F, SH)
+    ht1 = find_height(4160-CB1, row.Distance, F, SH)
+    CTH1 = round(pitch_correct(pitch, FOV, ht1) + camera_height, 2)
+    CBH1 = round(pitch_correct(pitch, FOV, hb1) + camera_height, 2)
+    hb2 = find_height(4160-CT2, row.Distance, F, SH)
+    ht2 = find_height(4160-CB2, row.Distance, F, SH)
+    CTH2 = round(pitch_correct(pitch, FOV, ht2) + camera_height, 2)
+    CBH2 = round(pitch_correct(pitch, FOV, hb2) + camera_height, 2)
     df2.at[row.Index, 'Time'] = row.Date_Time
     df2.at[row.Index, 'distance_to_cloud'] = row.Distance
-    df2.at[row.Index, 'CT'] = CTH
-    df2.at[row.Index, 'CB'] = CBH
-    df2.at[row.Index, 'CTP'] = CB
-    df2.at[row.Index, 'CBP'] = CT
-    df2.at[row.Index, 'X'] = X
-    df2.at[row.Index, 'W'] = W
+    df2.at[row.Index, 'CT1'] = CTH2
+    df2.at[row.Index, 'CB1'] = CBH1
+    df2.at[row.Index, 'CTP1'] = CB2
+    df2.at[row.Index, 'CBP1'] = CT1
+    df2.at[row.Index, 'X1'] = X1
+    df2.at[row.Index, 'W1'] = W1
+    df2.at[row.Index, 'CT2'] = CTH1
+    df2.at[row.Index, 'CB2'] = CBH2
+    df2.at[row.Index, 'CTP2'] = CB1
+    df2.at[row.Index, 'CBP2'] = CT2
+    df2.at[row.Index, 'X2'] = X2
+    df2.at[row.Index, 'W2'] = W2
+    df2.at[row.Index, 'MAXCTH'] = np.nanmax([CTH1, CTH2])
 
 df2.to_csv(storage+'/results/'+date_to_use+'/'+date_to_use+'_camera_'+str(camera)+'_cloud_top_heights.csv')
 plt.rcParams['font.size'] = 16
 fig, axs = plt.subplots(figsize=(20, 20))
-plt.scatter(df2['Time'], df2['CT'], marker='o',)
+plt.scatter(df2['Time'], df2['CT1'], marker='o',)
 axs.xaxis.set_major_formatter(DateFormatter('%H:%M'))
 axs.set_xlabel('Time')
 axs.set_ylabel('Height (km)')
 axs.set_title('Max estimated cloud top height in photo for '+date+'\n camera: '+str(camera))
 plt.xticks(rotation=45)
 plt.savefig(storage + 'results/' + date_to_use + '/' +
-            date_to_use + '_camera_'+str(camera)+'_cloud_top_height.png')
+            date_to_use + '_camera_'+str(camera)+'_cloud_top_height1.png')
+plt.close('all')
+fig, axs = plt.subplots(figsize=(20, 20))
+plt.scatter(df2['Time'], df2['MAXCTH'], marker='o',)
+axs.xaxis.set_major_formatter(DateFormatter('%H:%M'))
+axs.set_xlabel('Time')
+axs.set_ylabel('Height (km)')
+axs.set_title('Max estimated cloud top height in photo for '+date+'\n camera: '+str(camera))
+plt.xticks(rotation=45)
+plt.savefig(storage + 'results/' + date_to_use + '/' +
+            date_to_use + '_camera_'+str(camera)+'_cloud_top_height_max_height.png')
+plt.close('all')
+fig, axs = plt.subplots(figsize=(20, 20))
+plt.scatter(df2['Time'], df2['CT2'], marker='o',)
+axs.xaxis.set_major_formatter(DateFormatter('%H:%M'))
+axs.set_xlabel('Time')
+axs.set_ylabel('Height (km)')
+axs.set_title('Max estimated cloud top height in photo for '+date+'\n camera: '+str(camera))
+plt.xticks(rotation=45)
+plt.savefig(storage + 'results/' + date_to_use + '/' +
+            date_to_use + '_camera_'+str(camera)+'_cloud_top_height2.png')
+plt.close('all')
+
+fig, axs = plt.subplots(figsize=(20, 20))
+plt.scatter(df2['Time'], df2['CB1'], marker='o',)
+axs.xaxis.set_major_formatter(DateFormatter('%H:%M'))
+axs.set_xlabel('Time')
+axs.set_ylabel('Height (km)')
+axs.set_title('Max estimated cloud base height in photo for '+date+'\n camera: '+str(camera))
+plt.xticks(rotation=45)
+plt.savefig(storage + 'results/' + date_to_use + '/' +
+            date_to_use + '_camera_'+str(camera)+'_cloud_base_height1.png')
+plt.close('all')
+
+fig, axs = plt.subplots(figsize=(20, 20))
+plt.scatter(df2['Time'], df2['CB2'], marker='o',)
+axs.xaxis.set_major_formatter(DateFormatter('%H:%M'))
+axs.set_xlabel('Time')
+axs.set_ylabel('Height (km)')
+axs.set_title('Max estimated cloud base height in photo for '+date+'\n camera: '+str(camera))
+plt.xticks(rotation=45)
+plt.savefig(storage + 'results/' + date_to_use + '/' +
+            date_to_use + '_camera_'+str(camera)+'_cloud_base_height2.png')
 plt.close('all')
 fig, axs = plt.subplots(figsize=(20, 20))
 plt.scatter(df2['Time'], df2['distance_to_cloud'], marker='o',)
@@ -216,12 +267,22 @@ plt.savefig(storage + 'results/' + date_to_use + '/' +
             date_to_use + '_camera_'+str(camera)+'_distance_vs_time.png')
 plt.close('all')
 fig, axs = plt.subplots(figsize=(20, 20))
-plt.scatter(df2['Time'], df2['X']+df2['W']/2, marker='o',)
+plt.scatter(df2['Time'], df2['X1']+df2['W1']/2, marker='o',)
 axs.xaxis.set_major_formatter(DateFormatter('%H:%M'))
 axs.set_xlabel('Time')
 axs.set_ylabel('pixels from left corner')
 axs.set_title('Horizontal pixel co-ordinate for center of box round clound  '+date+'\n camera: '+str(camera))
 plt.xticks(rotation=45)
 plt.savefig(storage + 'results/' + date_to_use + '/' +
-            date_to_use + '_camera_'+str(camera)+'_horizontal_movement_vs_time.png')
+            date_to_use + '_camera_'+str(camera)+'_horizontal_movement_vs_time1.png')
+plt.close('all')
+fig, axs = plt.subplots(figsize=(20, 20))
+plt.scatter(df2['Time'], df2['X2']+df2['W2']/2, marker='o',)
+axs.xaxis.set_major_formatter(DateFormatter('%H:%M'))
+axs.set_xlabel('Time')
+axs.set_ylabel('pixels from left corner')
+axs.set_title('Horizontal pixel co-ordinate for center of box round clound  '+date+'\n camera: '+str(camera))
+plt.xticks(rotation=45)
+plt.savefig(storage + 'results/' + date_to_use + '/' +
+            date_to_use + '_camera_'+str(camera)+'_horizontal_movement_vs_time2.png')
 plt.close('all')

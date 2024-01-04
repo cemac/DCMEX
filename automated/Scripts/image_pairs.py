@@ -60,16 +60,24 @@ for file1 in os.listdir(folder1):
             plt.subplot(1, 2, 1)
             plt.imshow(img1)
             try:
-                plt.plot(filtered_df.W.values[0]/2+filtered_df.X.values[0], filtered_df.CTP.values[0], 'o',color='r')
-                plt.text(filtered_df.W.values[0]/2+filtered_df.X.values[0], filtered_df.CTP.values[0],str(filtered_df.CT.values[0])+' km',fontsize=40, color='k')
-                plt.plot(filtered_df.W.values[0]/2+filtered_df.X.values[0], filtered_df.CBP.values[0], 'o',color='r')
-                plt.text(filtered_df.W.values[0]/2+filtered_df.X.values[0], filtered_df.CBP.values[0],str(filtered_df.CB.values[0])+' km',fontsize=40, color='k')
+                plt.plot(filtered_df.W1.values[0]/2+filtered_df.X1.values[0], filtered_df.CTP1.values[0], 'o',color='r')
+                plt.text(filtered_df.W1.values[0]/2+filtered_df.X1.values[0]-100, filtered_df.CTP1.values[0]-30,str(filtered_df.CT1.values[0])+' km',fontsize=16, color='k')
+                plt.plot(filtered_df.W1.values[0]/2+filtered_df.X1.values[0], filtered_df.CBP1.values[0], 'o',color='r')
+                plt.text(filtered_df.W1.values[0]/2+filtered_df.X1.values[0]-100, filtered_df.CBP1.values[0]+100,str(filtered_df.CB1.values[0])+' km',fontsize=16, color='k')
+                plt.plot(filtered_df.W2.values[0]/2+filtered_df.X2.values[0], filtered_df.CTP2.values[0], 'o',color='r')
+                plt.text(filtered_df.W2.values[0]/2+filtered_df.X2.values[0]-100, filtered_df.CTP2.values[0]-30,str(filtered_df.CT2.values[0])+' km',fontsize=16, color='k')
+                plt.plot(filtered_df.W2.values[0]/2+filtered_df.X2.values[0], filtered_df.CBP2.values[0], 'o',color='r')
+                plt.text(filtered_df.W2.values[0]/2+filtered_df.X2.values[0]-100, filtered_df.CBP2.values[0]+100,str(filtered_df.CB2.values[0])+' km',fontsize=16, color='k')
             except IndexError:
                 print('no box')
             plt.title(str(timestamp1)+'\n boxed cloud image')
             plt.subplot(1, 2, 2)
             plt.imshow(img2)
             plt.axis('off')  # Turn off axes
-            plt.title(str(timestamp_nearest)+'\n optical depth')
+            try:  
+                plt.title(str(timestamp_nearest)+' optical depth \n Distance to Cloud: ' + str(int(filtered_df.distance_to_cloud.values[0]))+ ' km' )
+            except IndexError:
+                print('no box')
+                plt.title(str(timestamp_nearest)+' optical depth' )
             plt.savefig(folder3+timestamp1.strftime('%Y-%m-%dT%H:%M')+'.png')
             plt.close('all')

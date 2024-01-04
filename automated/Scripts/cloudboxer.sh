@@ -12,12 +12,12 @@
 #python cloudtop_pixel_heights.py 1 '2022-07-29'
 #python cloudtop_pixel_heights.py 2 '2022-07-29'
 
-python cloudtop_pixel_heights.py 1 '2022-07-30'
-python cloudtop_pixel_heights.py 2 '2022-07-30'
-python cloudtop_pixel_heights.py 1 '2022-07-31'
-python cloudtop_pixel_heights.py 2 '2022-07-31'
-#python cloudtop_pixel_heights.py 1 '2022-07-27'
-python cloudtop_pixel_heights.py 2 '2022-07-27'
+#python cloudtop_pixel_heights.py 1 '2022-07-30'
+#python cloudtop_pixel_heights.py 2 '2022-07-30'
+#python cloudtop_pixel_heights.py 1 '2022-07-31'
+#python cloudtop_pixel_heights.py 2 '2022-07-31'
+python cloudtop_pixel_heights.py 1 '2022-07-27'
+#python cloudtop_pixel_heights.py 2 '2022-07-27'
 
 #python cloudtop_pixel_heights.py 1 '2022-07-29'
 #python cloudtop_pixel_heights.py 2 '2022-07-29'
