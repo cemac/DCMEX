@@ -161,9 +161,8 @@ def find_contours(fname, title, WHITENESS_THRESHOLD, THICKNESS, NOSKY):
     Output: (y_max, h_max, y_max1, h_max1, x_max, x_max1, w_max, w_max1)
     """
     # Load the image and convert to grayscale
-    img_grey = color.rgb2gray(io.imread(glob.glob(fname)[0]))
-    img = Image.open(glob.glob(fname)[0])
-    
+    img = io.imread(glob.glob(fname)[0])
+    img_grey = color.rgb2gray(img)
     # Create a mask based on pixel whiteness
     mask = np.all(img > WHITENESS_THRESHOLD, axis=-1)
     img_grey[~mask] = 0
