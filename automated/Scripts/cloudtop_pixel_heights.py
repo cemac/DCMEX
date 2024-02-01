@@ -189,12 +189,11 @@ def find_contours(fname, title, WHITENESS_THRESHOLD, THICKNESS, NOSKY):
             max_max = rectangle_area
 
     try:
-       # Draw a rectangle around the detected object with the maximum area
-       cv2.rectangle(bounding_box_image, (x_max1, y_max1), 
-                  (x_max1 + w_max1, y_max1 + h_max1), (0, 255, 0), 
-                  THICKNESS)
-
-    except :
+        # Draw a rectangle around the detected object with the maximum area
+        cv2.rectangle(bounding_box_image, (x_max1, y_max1), 
+                      (x_max1 + w_max1, y_max1 + h_max1), (0, 255, 0), 
+                      THICKNESS)
+    except UnboundLocalError:
         # Return zeros if no bounding box is detected
         return 0, 0, 0, 0, 0, 0, 0, 0
 
