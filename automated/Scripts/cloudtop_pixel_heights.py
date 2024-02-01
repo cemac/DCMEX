@@ -43,7 +43,6 @@ WHITENESS_THRESHOLD = 115
 THICKNESS = 16
 # The part of every photo is just ground set to 0 if whole photo is cloud
 NOTSKY = 3350
-
 # Set file paths and directories
 storage = '/home/users/hburns/GWS/DCMEX/users/hburns/'
 imgroot = os.path.join(storage, "images/cloud_top_heights", 
@@ -167,7 +166,7 @@ def find_contours(fname, title, WHITENESS_THRESHOLD, THICKNESS, NOSKY):
     mask = np.all(img > WHITENESS_THRESHOLD, axis=-1)
     img_grey[~mask] = 0
     img_grey[NOSKY::, :] = 0
-
+    img_grey[img_grey>0] = 1
     # Use NumPy for operations instead of PIL and CV2
     cv_grey = cv2.GaussianBlur(img_grey.astype(np.uint8) * 255, (5, 5), 0)
     edges = cv2.Canny(cv_grey, 0, 200)
@@ -184,17 +183,18 @@ def find_contours(fname, title, WHITENESS_THRESHOLD, THICKNESS, NOSKY):
     for contour in sorted_contours:
         (x, y, w, h) = cv2.boundingRect(contour)
         rectangle_area = w * h
-
+        
         if rectangle_area >= max_max:
             x_max1, y_max1, w_max1, h_max1 = x, y, w, h
             max_max = rectangle_area
 
     try:
-        # Draw a rectangle around the detected object with the maximum area
-        cv2.rectangle(bounding_box_image, (x_max1, y_max1), 
-                      (x_max1 + w_max1, y_max1 + h_max1), (0, 255, 0), 
-                      THICKNESS)
-    except cv2.error:
+       # Draw a rectangle around the detected object with the maximum area
+       cv2.rectangle(bounding_box_image, (x_max1, y_max1), 
+                  (x_max1 + w_max1, y_max1 + h_max1), (0, 255, 0), 
+                  THICKNESS)
+
+    except :
         # Return zeros if no bounding box is detected
         return 0, 0, 0, 0, 0, 0, 0, 0
 
@@ -209,13 +209,16 @@ def find_contours(fname, title, WHITENESS_THRESHOLD, THICKNESS, NOSKY):
             if rectangle_area < max_max:
                 x_max, y_max, w_max, h_max = x, y, w, h
                 max_c = rectangle_area
-
-    # Draw a rectangle around the second-largest detected object
-    cv2.rectangle(bounding_box_image, (x_max, y_max), 
+    try:            
+        # Draw a rectangle around the second-largest detected object
+        cv2.rectangle(bounding_box_image, (x_max, y_max), 
                   (x_max + w_max, y_max + h_max), (0, 255, 0), THICKNESS)
-
+    except UnboundLocalError:
+        # Return zeros if no bounding box is detected
+        return 0, 0, 0, 0, 0, 0, 0, 0
     # Save the image with bounding boxes
-    cv2.imwrite('output/' + title + '_cloud_box.png', bounding_box_image)
+    #print(imgroot+'/'+title + '_cloud_box.png')
+    cv2.imwrite(imgroot+'/'+title + '_cloud_box.png', bounding_box_image)
 
     return y_max, h_max, y_max1, h_max1, x_max, x_max1, w_max, w_max1
 
@@ -247,6 +250,7 @@ for i in range(len(fnames)):
         print('error:', check)
         continue
     fig, axs = plt.subplots(figsize=(20, 20))
+    print(fnames[i])
     cloudbox1 = find_contours(fnames[i],
                               date_fnames[0] + '-' + time_list[i] + '_',
                               WHITENESS_THRESHOLD, THICKNESS, NOTSKY)

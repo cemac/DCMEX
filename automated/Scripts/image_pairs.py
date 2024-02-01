@@ -2,6 +2,7 @@ import os
 import datetime
 from shutil import copyfile
 from PIL import Image
+import cv2 as cv2
 import matplotlib.pyplot as plt
 import pandas as pd
 import sys
@@ -52,7 +53,7 @@ for file1 in os.listdir(folder1):
             file2_path = os.path.join(folder2, closest_file2)
             filtered_df = cloud_heights[(pd.to_datetime(cloud_heights['Time']) == timestamp1)]
             timestamp_nearest = extract_timestamp_folder2(closest_file2)
-            img1 = Image.open(file1_path)
+            img1 = cv2.imread(file1_path)
             img2 = Image.open(file2_path)
             # Create a new figure with subplots
             plt.figure(figsize=(40, 20))              
