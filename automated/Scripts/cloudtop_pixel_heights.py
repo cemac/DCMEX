@@ -42,7 +42,7 @@ WHITENESS_THRESHOLD = 115
 # line thickness of box
 THICKNESS = 16
 # The part of every photo is just ground set to 0 if whole photo is cloud
-NOTSKY = 3350
+NOTSKY = 3800
 # Set file paths and directories
 storage = '/home/users/hburns/GWS/DCMEX/users/hburns/'
 imgroot = os.path.join(storage, "images/cloud_top_heights", 
@@ -189,11 +189,12 @@ def find_contours(fname, title, WHITENESS_THRESHOLD, THICKNESS, NOSKY):
             max_max = rectangle_area
 
     try:
-        # Draw a rectangle around the detected object with the maximum area
-        cv2.rectangle(bounding_box_image, (x_max1, y_max1), 
-                      (x_max1 + w_max1, y_max1 + h_max1), (0, 255, 0), 
-                      THICKNESS)
-    except UnboundLocalError:
+       # Draw a rectangle around the detected object with the maximum area
+       cv2.rectangle(bounding_box_image, (x_max1, y_max1), 
+                  (x_max1 + w_max1, y_max1 + h_max1), (0, 255, 0), 
+                  THICKNESS)
+
+    except :
         # Return zeros if no bounding box is detected
         return 0, 0, 0, 0, 0, 0, 0, 0
 

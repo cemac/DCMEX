@@ -43,8 +43,8 @@ FOV = 27
 # equations from: https://www.scantips.com/lights/fieldofviewmath.html might need to find a text book referece!
 
 # List of camera locations from files, dates, corresponding frame, ring colours and distances
-camlon = -106.898107
-camlat = 34.023982
+camlon = -106.535183
+camlat = 34.12041
 # equations from: https://www.scantips.com/lights/fieldofviewmath.html might need to find a text book referece!
 
 
@@ -80,6 +80,7 @@ df = pd.read_csv('pixel_data/cloud_distance_pc_and_pixel_height.csv')
 df2 = pd.DataFrame(columns=['Time', 'distance_to_cloud', 'CB1', 'CB2', 'CB3', 'CT1', 'CT2', 'CT3'])
 df3 = pd.DataFrame(columns=['Time', 'distance_to_cloud', 'CB1', 'CB2', 'CB3', 'CT1', 'CT2', 'CT3'])
 for i in range(5):
+
     h = find_height(df["CB1"][i], df["distance_max"]
                       [i], F, SH)
     CB1 = round(pitch_correct(df["pitch"][i], FOV, h) + camera_height, 2)
@@ -101,4 +102,4 @@ for i in range(5):
     df2.loc[i] = [df["Time"][i], df["distance_max"][i], CB1, CB2, CB3, CT1,
                   CT2, CT3]
 
-df2.to_csv('results/cloud_heights_using_min_distance_pitch_corr_pc_max_cloudtop_distance.csv')
+df2.to_csv('results/cloud_heights_using_min_distance_pitch_corr_pc_max_cloudtop_distance_2.csv')

@@ -25,8 +25,8 @@ fname_root2 = "/OR_ABI-*_G16_*_select_rgd.nc"
 
 
 # List of camera locations from files, dates, corresponding frame, ring colours and distances
-camlon = [-106.898107, -106.898355, -106.898280, -106.898235, -106.898220]
-camlat = [34.023982, 34.023910, 34.023910, 34.024008, 34.024018]
+camlon = [-106.535249, -106.535343, -106.535343, -106.535343 ,-106.535343]
+camlat = [34.12629, 34.12618, 34.12618, 34.12618, 34.12618]
 dates = ['2022-07-25-1704', '2022-07-31-1732',
          '2022-07-31-1733', '2022-07-31-1737', '2022-07-31-1741']
 # Index of nearest time: todo: code up nearet time selector
