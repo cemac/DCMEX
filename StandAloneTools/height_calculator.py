@@ -9,7 +9,7 @@ This script calculates the height of clouds based on pixel position, distance, a
 
 Usage: python calculate_heights.py <pixels> <distance> <pitch>
 where: 
-- pixels is the pixel position of the cloud on the sensor (int)
+- pixels is the y-pixel position of the cloud on the photo (0,0) being left hand corner (int)
 - distance is the distance to the cloud in kilometers (float)
 - pitch is the pitch of the camera in degrees (float)
 
@@ -25,10 +25,9 @@ class CloudHeightCalculator:
     A class to calculate the height of clouds.
 
     Attributes:
-        pixels (int): Pixel position of the cloud on the sensor.
+        pixels (int): y-pixel position of the cloud on the photo (0,0 being the left hand corner).
         distance (float): Distance to the cloud in kilometers.
         pitch (float): Pitch of the camera in degrees.
-        camera (Camera): An instance of the Camera class, which is used to perform the height calculation.
     """
 
     def __init__(self, pixels, distance, pitch):
@@ -36,21 +35,20 @@ class CloudHeightCalculator:
         Initialize the CloudHeightCalculator with pixel position, distance, and pitch.
 
         Args:
-            pixels (int): Pixel position of the cloud on the sensor.
+            pixels (int): y-pixel position of the cloud on the photo.
             distance (float): Distance to the cloud in kilometers.
             pitch (float): Pitch of the camera in degrees.
         """
         self.pixels = int(pixels)
         self.distance = float(distance)
         self.pitch = float(pitch)
-        self.camera = Camera()
 
     def calculate_height(self):
         """
         Calculate the height of the cloud.
 
-        This method uses the pixel position, distance, and pitch to calculate the raw height of the cloud, 
-        then corrects this height based on the camera's specifications.
+        This method uses the pixel position, distance to calculate the raw height of the cloud, 
+        then corrects this height based on the camera's pitch.
 
         Returns:
             float: The corrected height of the cloud.
@@ -97,17 +95,16 @@ class Camera:
         """
         Calculate the vertical field of view in degrees.
         """
-        horizontal_rad = 2 * math.atan(self.sensor_width_mm / (2 * self.focal_length_mm))
         vertical_rad = 2 * math.atan(self.sensor_height_mm / (2 * self.focal_length_mm))
         self.fov_vertical_deg = math.degrees(vertical_rad)
 
     def find_height(self, P, Distance):
         """
-        Calculate the height of an object given its pixel position on the sensor.
+        Calculate the height of an object given its pixel position on the photo.
 
         Args:
-            P (int): Pixel position of the object on the sensor.
-            Distance (float): Distance to the object in m
+            P (int): y-pixel position of the object on the photo.
+            Distance (float): Distance to the object in km
 
         Returns:
             float: Height of the object in kilometers (rounded to 2 decimal places).
@@ -121,7 +118,7 @@ class Camera:
         Calculate the Object Height on Sensor.
 
         Args:
-            P (int): Pixel position of the object on the sensor.
+            P (int): Pixel position of the object on the photo.
 
         Returns:
             float: Object Height on Sensor.
