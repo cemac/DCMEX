@@ -143,7 +143,7 @@ class Camera:
         # image plane incline from vertical
         c = 180 - a - b
         # x is true height, h is height on inclined place
-        x = h * math.cos(c)
+        x = h * math.cos(math.radians(c))
         return x
 
 if __name__ == "__main__":

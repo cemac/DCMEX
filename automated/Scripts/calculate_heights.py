@@ -153,7 +153,7 @@ def pitch_correct(P, FieldOfView, h):
     # image plane incline from vertical
     c = 180 - a - b
     # x is true height, h is height on incled place
-    x = h * math.cos(c)
+    x = h * math.cos(math.radians(c))
     return x
 
 
