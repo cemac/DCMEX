@@ -7,7 +7,9 @@
 # DCMEX #
 
 
-[![GitHub release](https://img.shields.io/github/release/cemac/DCMEX.svg)](https://github.com/cemac/DCMEX/releases) [![GitHub top language](https://img.shields.io/github/languages/top/cemac/DCMEX.svg)](https://github.com/cemac/DCMEX) [![GitHub issues](https://img.shields.io/github/issues/cemac/DCMEX.svg)](https://github.com/cemac/DCMEX/issues) [![GitHub last commit](https://img.shields.io/github/last-commit/cemac/DCMEX.svg)](https://github.com/cemac/DCMEX/commits/master) [![GitHub All Releases](https://img.shields.io/github/downloads/cemac/DCMEX/total.svg)](https://github.com/cemac/DCMEX/releases) ![GitHub](https://img.shields.io/github/license/cemac/DCMEX.svg)
+[![DOI](https://zenodo.org/badge/558317218.svg)](https://zenodo.org/doi/10.5281/zenodo.13532812)
+
+[![GitHub release](https://img.shields.io/github/release/cemac/DCMEX.svg)](https://github.com/cemac/DCMEX/releases) [![GitHub top language](https://img.shields.io/github/languages/top/cemac/DCMEX.svg)](https://github.com/cemac/DCMEX) [![GitHub issues](https://img.shields.io/github/issues/cemac/DCMEX.svg)](https://github.com/cemac/DCMEX/issues) [![GitHub last commit](https://img.shields.io/github/last-commit/cemac/DCMEX.svg)](https://github.com/cemac/DCMEX/commits/master) [![GitHub All Releases](https://img.shields.io/github/downloads/cemac/DCMEX/total.svg)](https://github.com/cemac/DCMEX/releases) ![GitHub](https://img.shields.io/github/license/cemac/DCMEX.svg) 
 
 
 # DCMEX - Automated Measuring of cloud height.
