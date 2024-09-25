@@ -20,7 +20,7 @@ The code here attempts to automatically detect the cloud base and top height fro
 2. Open CV edge detection to estimate cloud top location in image
 3. Thin Lens equations to use lens information, pixel information and distance information to give a pitch corrected cloud top height estimate
 
-All the methodology is outlined in the [DCMEX wiki](ttps://github.com/cemac/DCMEX/wiki)
+All the methodology is outlined in the [DCMEX wiki](https://github.com/cemac/DCMEX/wiki)
 
 # DCMEX - StandAlone Tools.
 
@@ -42,7 +42,7 @@ python requirements are provided in the DCMEX.yml file
 
 # Documentation
 
-Documentation of this work is currently held in the notes directory along with additional documentation in the relevant sub directories
+Detailed documentation of the the tools and methodology and dataset used is provided in [this repositories wiki](ttps://github.com/cemac/DCMEX/wiki).
 
 # Acknowledgements #
 
