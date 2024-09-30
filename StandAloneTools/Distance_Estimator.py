@@ -45,7 +45,7 @@ class CloudOpticalDepthProcessor:
         Process the satellite file and generate the FOV plot.
     """
 
-    def __init__(self, file_name, camera):
+    def __init__(self, file_name):
         """
         Initialize CloudOpticalDepthProcessor with input arguments.
         """
@@ -53,10 +53,15 @@ class CloudOpticalDepthProcessor:
         self.storage = '/home/users/hburns/GWS/DCMEX/users/hburns/'
         self.dataroot = '/gws/nopw/j04/dcmex/data'
         self.yaw_error = 10
-        self.camera= camera
         self.optical_depth_threshold = 3.6
         self.cam_details_path = f'{self.storage}/camera_details.csv'
         self.cam_df = pd.read_csv(self.cam_details_path)
+        self.lat1 = 33.75
+        self.lat2 = 34.25
+        self.lon1 = -107.5
+        self.lon2 = -106.8
+        self.date_fnames,self.date_to_use, self.time_to_use,self.camera = self.extract_file_metadata()
+       
         
 
     def extract_file_metadata(self):
@@ -66,14 +71,14 @@ class CloudOpticalDepthProcessor:
         parts = os.path.splitext(os.path.basename(self.file_name))[0].split('-')
         yyyy, mm, dd, hhmmss = parts[3], parts[4], parts[5], parts[6]
         date_time = datetime.strptime(f'{yyyy}-{mm}-{dd}-{hhmmss}', "%Y-%m-%d-%H%M%S")
-        return date_time.strftime("%d-%m-%Y"), date_time.strftime("%Y-%m-%d"), date_time.strftime("%H%M")
+        camera = parts[2]
+        return date_time.strftime("%d-%m-%Y"), date_time.strftime("%Y-%m-%d"), date_time.strftime("%H%M"), camera
 
     def load_camera_details(self):
         """
         Load camera details for the specific date and camera number.
         """
-        date_fnames, _, _ = self.extract_file_metadata()
-        filtered_df = self.cam_df[(self.cam_df['Date'] == date_fnames) & (self.cam_df['camera'] == self.camera)]
+        filtered_df = self.cam_df[(self.cam_df['Date'] == self.date_fnames) & (self.cam_df['camera'] == self.camera)]
         yaw_degrees = filtered_df.yaw.values[0]
         camlat = filtered_df.camlat.values[0]
         camlon = filtered_df.camlon.values[0]
@@ -140,9 +145,8 @@ class CloudOpticalDepthProcessor:
         channel1 = "ABI-L2-CODC/"
         fname_root = "/OR_ABI-L2-CODC-M6_G16*_select_pcrgd.nc" 
         # Load satellite data
-        _,self.date_to_use, time_to_use = self.extract_file_metadata()
         date_path = self.date_to_use.replace('-', '/', 3)
-        rad = self.interp_flag16(xr.open_mfdataset(glob.glob(file_root + channel1 + date_path + '/'+time_to_use[0:2]+fname_root),combine="nested", 
+        rad = self.interp_flag16(xr.open_mfdataset(glob.glob(file_root + channel1 + date_path + '/'+self.time_to_use[0:2]+fname_root),combine="nested", 
                                  concat_dim="t")["var1"].sel(lon=slice(lon1, lon2),
                                                                        lat=slice(lat1, lat2)))
 
@@ -154,14 +158,13 @@ def main():
     """
     Main function to be run from the command line.
     """
-    if len(sys.argv) < 2:
-        print("Usage: python script.py <filename> <camera_number>")
+    if len(sys.argv) < 1:
+        print("Usage: python script.py <filename> ")
         sys.exit(1)
 
     file_name = sys.argv[1]
-    camera = int(sys.argv[2])
 
-    processor = CloudOpticalDepthProcessor(file_name, camera)
+    processor = CloudOpticalDepthProcessor(file_name)
     processor.process_file()
 
 
