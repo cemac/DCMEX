@@ -78,7 +78,7 @@ class CloudOpticalDepthProcessor:
         """
         Load camera details for the specific date and camera number.
         """
-        filtered_df = self.cam_df[(self.cam_df['Date'] == self.date_fnames) & (self.cam_df['camera'] == self.camera)]
+        filtered_df = self.cam_df[(self.cam_df['Date'] == self.date_fnames) & (self.cam_df['camera'] == int(self.camera))]
         yaw_degrees = filtered_df.yaw.values[0]
         camlat = filtered_df.camlat.values[0]
         camlon = filtered_df.camlon.values[0]
