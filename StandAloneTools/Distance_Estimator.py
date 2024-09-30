@@ -1,14 +1,9 @@
 import xarray as xr
-import glob
 import os
 import pandas as pd
 from datetime import datetime
 import matplotlib.pyplot as plt
-from matplotlib.path import Path
-import pyproj
 import numpy as np
-import haversine as hs
-import math
 import sys
 
 class CloudOpticalDepthProcessor:
@@ -145,7 +140,7 @@ class CloudOpticalDepthProcessor:
         rad = self.interp_flag16(xr.open_dataset(self.file_name)["var1"])
 
         # Plot FOV and optical depth data
-        self.plot_fov(rad, camlat, camlon, yaw_degrees, f"Optical Depth Plot for {self.date_to_use}")
+        self.plot_fov(rad, camlat, camlon, yaw_degrees, f"Optical Depth Plot")
 
 
 def main():
@@ -153,7 +148,7 @@ def main():
     Main function to be run from the command line.
     """
     if len(sys.argv) < 4:
-        print("Usage: python script.py <filename> <camera_number> <date_to_use>")
+        print("Usage: python script.py <filename> <camera_number>")
         sys.exit(1)
 
     file_name = sys.argv[1]
