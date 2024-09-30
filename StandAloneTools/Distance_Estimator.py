@@ -1,5 +1,6 @@
 import xarray as xr
 import os
+import glob
 import pandas as pd
 from datetime import datetime
 import matplotlib.pyplot as plt
@@ -135,12 +136,18 @@ class CloudOpticalDepthProcessor:
         """
         # Load camera details
         yaw_degrees, camlat, camlon = self.load_camera_details()
-
+        file_root = "/gws/nopw/j04/dcmex/data/GOES16pcrgd/Magda/"
+        channel1 = "ABI-L2-CODC/"
+        fname_root = "/OR_ABI-L2-CODC-M6_G16*_select_pcrgd.nc" 
         # Load satellite data
-        rad = self.interp_flag16(xr.open_dataset(self.file_name)["var1"])
+        _,self.date_to_use, time_to_use = self.extract_file_metadata()
+        date_path = self.date_to_use.replace('-', '/', 3)
+        rad = self.interp_flag16(xr.open_mfdataset(glob.glob(file_root + channel1 + date_path + '/'+time_to_use[0:2]+fname_root),combine="nested", 
+                                 concat_dim="t")["var1"].sel(lon=slice(lon1, lon2),
+                                                                       lat=slice(lat1, lat2)))
 
         # Plot FOV and optical depth data
-        self.plot_fov(rad, camlat, camlon, yaw_degrees, f"Optical Depth Plot")
+        self.plot_fov(rad, camlat, camlon, yaw_degrees, f"Optical Depth Plot for {self.date_to_use}")
 
 
 def main():
