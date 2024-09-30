@@ -147,7 +147,7 @@ def main():
     """
     Main function to be run from the command line.
     """
-    if len(sys.argv) < 4:
+    if len(sys.argv) < 2:
         print("Usage: python script.py <filename> <camera_number>")
         sys.exit(1)
 
