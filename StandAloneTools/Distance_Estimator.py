@@ -56,7 +56,7 @@ class CloudOpticalDepthProcessor:
         self.optical_depth_threshold = 3.6
         self.cam_details_path = f'{self.storage}/camera_details.csv'
         self.cam_df = pd.read_csv(self.cam_details_path)
-        self.setup_directories()
+        
 
     def extract_file_metadata(self):
         """
