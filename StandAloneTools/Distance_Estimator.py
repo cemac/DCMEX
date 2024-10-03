@@ -311,13 +311,14 @@ class CloudOpticalDepthProcessor:
         if self.camera=='1':
             ax.legend(['MRO','CB', 'Max optical depth', '8km', '9km', '10km', '11km', '12km',   '13km',  '14km',
                         '15km',  '16km', '17km',  '18km', '19km', '20km', '21km',
-                        '23km', '24km', 'Camera','South Baldy peak'], loc='upper right',bbox_to_anchor=(1.05, 1)) 
+                        '23km', '24km', 'Camera','South Baldy peak'], loc='upper right',bbox_to_anchor=(1.3, 1)) 
         else:   
             ax.legend(['24km', '25km', '26km', '27km', '28km', '29km', '30km',
                        '31km',  '32km',  '33km',  '34km', '35km', '36km', '37km',
                        '38km', '39km','Camera','MRO','CB','South Baldy peak'])
         plt.tight_layout()
         print('Distance to max cloud:', round(D,2), 'km')
+        plt.subplots_adjust(top=0.85)
         plt.show()
         return D, maxlat_2, maxlon_2
 
