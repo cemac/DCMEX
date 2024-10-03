@@ -11,6 +11,7 @@ import sys
 from scipy.interpolate import griddata
 import pyproj
 import haversine as hs
+from functools import partial
 
 class CloudOpticalDepthProcessor:
     """
