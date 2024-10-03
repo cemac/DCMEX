@@ -12,6 +12,8 @@ from scipy.interpolate import griddata
 import pyproj
 import haversine as hs
 from functools import partial
+from shapely.ops import transform
+from shapely.geometry import Point
 
 class CloudOpticalDepthProcessor:
     """
