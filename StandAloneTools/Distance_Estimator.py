@@ -254,8 +254,12 @@ class CloudOpticalDepthProcessor:
         CB = [34.0248532, -106.9267249]
         clourlist = ['whitesmoke', 'gray', 'khaki', 'steelblue', 'seagreen',
                      'aqua', 'orchid', 'firebrick', 'w', 'k', 'y', 'b', 'g', 'c', 'm', 'r']
-        distance = [24, 25, 26, 27, 28,   29,  30,
-                    31,  32,  33,  34, 35, 36, 37, 38, 39]
+        if self.camera == 1:
+            distance = [24, 25, 26, 27, 28,   29,  30,
+                        31,  32,  33,  34, 35, 36, 37, 38, 39]
+        else:   
+            distance = [8, 9, 10, 11, 12,   13,  14,
+                        15,  16,  17,  18, 19, 20, 21, 23, 24]
         day1 = data.values
         lons = data.coords['lon'].values
         lats = data.coords['lat'].values
@@ -292,10 +296,14 @@ class CloudOpticalDepthProcessor:
         for d, c in zip(distance, clourlist):
             x, y = self.geodesic_point_buffer(camlat, camlon, d)
             ax.plot(x, y, color=c)
-        
-        ax.legend(['24km', '25km', '26km', '27km', '28km', '29km', '30km',
-                   '31km',  '32km',  '33km',  '34km', '35km', '36km', '37km',
-                   '38km', '39km'])
+        if self.camera==2:
+            ax.legend(['24km', '25km', '26km', '27km', '28km', '29km', '30km',
+                       '31km',  '32km',  '33km',  '34km', '35km', '36km', '37km',
+                       '38km', '39km'])
+        else:   
+            ax.legend(['24km', '25km', '26km', '27km', '28km', '29km', '30km',
+                       '31km',  '32km',  '33km',  '34km', '35km', '36km', '37km',
+                       '38km', '39km'])
         ax.scatter(camlon, camlat, color='r', marker='D', s=400, label='Camera')
         ax.scatter(MRO[1], MRO[0], marker='+', color='k', s=200, label='MRO')
         ax.scatter(CB[1], CB[0], marker='+', color='k', s=150, label='CB')
@@ -309,7 +317,7 @@ class CloudOpticalDepthProcessor:
         # Add a legend
         ax.legend()
         plt.tight_layout()
-        print('Distance to max cloud:', D)
+        print('Distance to max cloud:', round(D,2), 'km')
         plt.show()
         return D, maxlat_2, maxlon_2
 
