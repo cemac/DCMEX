@@ -1,5 +1,6 @@
 import xarray as xr
 import os
+import math
 import glob
 from matplotlib.path import Path
 import pandas as pd
@@ -7,6 +8,8 @@ from datetime import datetime
 import matplotlib.pyplot as plt
 import numpy as np
 import sys
+from scipy.interpolate import griddata
+import pyproj
 
 class CloudOpticalDepthProcessor:
     """
@@ -293,12 +296,13 @@ class CloudOpticalDepthProcessor:
         fname_root = "/OR_ABI-L2-CODC-M6_G16*_select_pcrgd.nc" 
         # Load satellite data
         date_path = self.date_to_use.replace('-', '/', 3)
-        rad = self.interp_flag16(xr.open_mfdataset(glob.glob(file_root + channel1 + date_path + '/'+self.time_to_use[0:2]+fname_root),combine="nested", 
-                                 concat_dim="t")["var1"].sel(lon=slice(self.lon1, self.lon2),
-                                                                       lat=slice(self.lat1, self.lat2)))
-
+        rad = xr.open_mfdataset(glob.glob(file_root + channel1 + date_path + '/'+self.time_to_use[0:2]+fname_root),combine="nested", 
+                                 concat_dim="t").sel(lon=slice(self.lon1, self.lon2),
+                                                                       lat=slice(self.lat1, self.lat2))
+        datetimephoto = datetime.strptime(self.date_to_use+self.time_to_use, "%Y-%m-%d%H%M")
+        rad = rad.sel(t=datetimephoto, method='nearest')
         # Plot FOV and optical depth data
-        self.plotring(rad, f"Optical Depth Plot for {self.date_to_use}")
+        self.plotring(rad.sel['var1'], f"Optical Depth Plot for {self.date_to_use}")
 
 
 def main():
