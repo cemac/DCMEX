@@ -10,6 +10,7 @@ import numpy as np
 import sys
 from scipy.interpolate import griddata
 import pyproj
+import haversine as hs
 
 class CloudOpticalDepthProcessor:
     """
@@ -283,6 +284,7 @@ class CloudOpticalDepthProcessor:
         # Add a legend
         ax.legend()
         plt.tight_layout()
+        print('Distance to max cloud:', D)
         plt.show()
         return D, maxlat_2, maxlon_2
 
@@ -301,8 +303,9 @@ class CloudOpticalDepthProcessor:
                                                                        lat=slice(self.lat1, self.lat2))
         datetimephoto = datetime.strptime(self.date_to_use+self.time_to_use, "%Y-%m-%d%H%M")
         rad = rad.sel(t=datetimephoto, method='nearest')
+        rad = self.interp_flag16(rad)
         # Plot FOV and optical depth data
-        self.plotring(rad.sel['var1'], f"Optical Depth Plot for {self.date_to_use}")
+        self.plotring(rad['var1'], f"Optical Depth Plot for {self.date_to_use}")
 
 
 def main():
