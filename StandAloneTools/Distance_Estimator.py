@@ -309,7 +309,7 @@ class CloudOpticalDepthProcessor:
         ax.set_ylim(self.lat1, self.lat2)
         # Add a legend
         if self.camera==1:
-            ax.legend(['MRO','CB', '8km', '9km', '10km', '11km', '12km',   '13km',  '14km',
+            ax.legend(['MRO','CB', 'Max optical depth', '8km', '9km', '10km', '11km', '12km',   '13km',  '14km',
                         '15km',  '16km', '17km',  '18km', '19km', '20km', '21km',
                         '23km', '24km', 'Camera','South Baldy peak'])
         else:   
