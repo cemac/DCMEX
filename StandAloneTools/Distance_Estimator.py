@@ -286,7 +286,7 @@ class CloudOpticalDepthProcessor:
             maxlon_2 = 'none'
         
         for d, c in zip(distance, clourlist):
-            x, y = geodesic_point_buffer(camlat, camlon, d)
+            x, y = self.geodesic_point_buffer(camlat, camlon, d)
             ax.plot(x, y, color=c)
         
         ax.legend(['24km', '25km', '26km', '27km', '28km', '29km', '30km',
