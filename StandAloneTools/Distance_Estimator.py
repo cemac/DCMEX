@@ -254,7 +254,7 @@ class CloudOpticalDepthProcessor:
         CB = [34.0248532, -106.9267249]
         clourlist = ['whitesmoke', 'gray', 'khaki', 'steelblue', 'seagreen',
                      'aqua', 'orchid', 'firebrick', 'w', 'k', 'y', 'b', 'g', 'c', 'm', 'r']
-        if self.camera == 1:
+        if self.camera == '2':
             distance = [24, 25, 26, 27, 28,   29,  30,
                         31,  32,  33,  34, 35, 36, 37, 38, 39]
         else:   
@@ -308,7 +308,7 @@ class CloudOpticalDepthProcessor:
         ax.set_xlim(self.lon1, self.lon2)
         ax.set_ylim(self.lat1, self.lat2)
         # Add a legend
-        if self.camera==1:
+        if self.camera=='1':
             ax.legend(['MRO','CB', 'Max optical depth', '8km', '9km', '10km', '11km', '12km',   '13km',  '14km',
                         '15km',  '16km', '17km',  '18km', '19km', '20km', '21km',
                         '23km', '24km', 'Camera','South Baldy peak'])
