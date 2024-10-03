@@ -193,6 +193,7 @@ class CloudOpticalDepthProcessor:
     # Fuction to plot 1km rings from
     def geodesic_point_buffer(self, lat, lon, km):
         # Azimuthal equidistant projection
+        proj_wgs84 = pyproj.Proj('+proj=longlat +datum=WGS84')
         aeqd_proj = '+proj=aeqd +lat_0={lat} +lon_0={lon} +x_0=0 +y_0=0'
         project = partial(
             pyproj.transform,
@@ -236,7 +237,7 @@ class CloudOpticalDepthProcessor:
         # Load camera details
         yaw_degrees, camlat, camlon = self.load_camera_details()
         fig, ax = plt.subplots(figsize=(20, 20))
-        proj_wgs84 = pyproj.Proj('+proj=longlat +datum=WGS84')
+        
         mask = data >= 3.6
         masked_data = data.where(mask, other=np.nan)
         masked_data.plot.pcolormesh(x="lon", y="lat", ax=ax, levels=[
