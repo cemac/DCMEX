@@ -189,6 +189,16 @@ class CloudOpticalDepthProcessor:
         ds['var1_filled'].values[mask] = var1_filled
         return ds
 
+    # Fuction to plot 1km rings from
+    def geodesic_point_buffer(self, lat, lon, km):
+        # Azimuthal equidistant projection
+        aeqd_proj = '+proj=aeqd +lat_0={lat} +lon_0={lon} +x_0=0 +y_0=0'
+        project = partial(
+            pyproj.transform,
+            pyproj.Proj(aeqd_proj.format(lat=lat, lon=lon)),
+            proj_wgs84)
+        buf = Point(0, 0).buffer(km * 1000)  # distance in metres
+        return transform(project, buf).exterior.coords.xy
 
     def plotring(self, data,title):
         """
@@ -238,6 +248,10 @@ class CloudOpticalDepthProcessor:
         southbaldy = [33.99, -107.19]
         MRO = [33.98481699, -107.18926709]
         CB = [34.0248532, -106.9267249]
+        clourlist = ['whitesmoke', 'gray', 'khaki', 'steelblue', 'seagreen',
+                     'aqua', 'orchid', 'firebrick', 'w', 'k', 'y', 'b', 'g', 'c', 'm', 'r']
+        distance = [24, 25, 26, 27, 28,   29,  30,
+                    31,  32,  33,  34, 35, 36, 37, 38, 39]
         day1 = data.values
         lons = data.coords['lon'].values
         lats = data.coords['lat'].values
@@ -270,7 +284,14 @@ class CloudOpticalDepthProcessor:
             D = 'no cloud'
             maxlat_2 = 'none'
             maxlon_2 = 'none'
-
+        
+        for d, c in zip(distance, clourlist):
+            x, y = geodesic_point_buffer(camlat, camlon, d)
+            ax.plot(x, y, color=c)
+        
+        ax.legend(['24km', '25km', '26km', '27km', '28km', '29km', '30km',
+                   '31km',  '32km',  '33km',  '34km', '35km', '36km', '37km',
+                   '38km', '39km'])
         ax.scatter(camlon, camlat, color='r', marker='D', s=400, label='Camera')
         ax.scatter(MRO[1], MRO[0], marker='+', color='k', s=200, label='MRO')
         ax.scatter(CB[1], CB[0], marker='+', color='k', s=150, label='CB')
