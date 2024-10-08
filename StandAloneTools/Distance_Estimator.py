@@ -279,7 +279,7 @@ class CloudOpticalDepthProcessor:
                         levels=[2400, 2500, 2800, 3300])
         ax.fill(fov_x, fov_y, color='silver', alpha=0.3, label='Field of View')
         ax.fill(fov_xp5, fov_yp5, color='silver',
-                alpha=0.2, label='Field of View Error',label='_nolegend_')
+                alpha=0.2, label='_nolegend_')
 
         try:
             maxlat_2, maxlon_2 = self.find_max_in_fov(data, fov_xp5, fov_yp5)
