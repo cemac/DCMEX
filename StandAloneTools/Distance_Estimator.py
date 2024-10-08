@@ -69,7 +69,7 @@ class CloudOpticalDepthProcessor:
         self.lon1 = -107.5
         self.lon2 = -106.8
         self.date_fnames,self.date_to_use, self.time_to_use,self.camera = self.extract_file_metadata()
-        self.imgroot = str(self.storage + "images/FOV_on_optical_depth/" +
+        self.imgroot = str(self.storage + "images2/FOV_on_optical_depth/" +
                            self.date_to_use+'/camera/')
         sensor_height_mm = 24.0
         sensor_width_mm = 35.9
