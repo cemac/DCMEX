@@ -21,7 +21,7 @@ import os
 import pandas as pd
 import sys
 sys.path.append(os.path.abspath("/gws/nopw/j04/dcmex/users/hburns/DCMEX/StandAloneTools/"))
-import Disance_Estimator as de
+import Distance_Estimator as de
 
 # Extract arguments
 camera = int(sys.argv[1])
