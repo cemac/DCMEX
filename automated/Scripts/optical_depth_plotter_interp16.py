@@ -16,19 +16,11 @@ where:
 """
 
 # Load modules
-import xarray as xr
 import glob
 import os
 import pandas as pd
-from datetime import datetime
-import matplotlib.pyplot as plt
-from matplotlib.path import Path
-import pyproj
-import numpy as np
-import haversine as hs
-import math
 import sys
-sys.path.append(os.path.abspath("/gws/nopw/j04/dcmex/users/hburns/DCMEX/Standalone/"))
+sys.path.append(os.path.abspath("/gws/nopw/j04/dcmex/users/hburns/DCMEX/StandAloneTools/"))
 import Disance_Estimator as de
 
 # Extract arguments
