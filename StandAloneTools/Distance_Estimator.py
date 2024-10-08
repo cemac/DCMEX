@@ -69,6 +69,8 @@ class CloudOpticalDepthProcessor:
         self.lon1 = -107.5
         self.lon2 = -106.8
         self.date_fnames,self.date_to_use, self.time_to_use,self.camera = self.extract_file_metadata()
+        self.imgroot = str(self.storage + "images/FOV_on_optical_depth/" +
+                           self.date_to_use+'/camera/')
         sensor_height_mm = 24.0
         sensor_width_mm = 35.9
 
@@ -174,8 +176,6 @@ class CloudOpticalDepthProcessor:
 
         return maxlat, maxlon
 
-   
-
     def interp_flag16(self, ds):
         """
         Perform interpolation for flagged data.
@@ -204,7 +204,7 @@ class CloudOpticalDepthProcessor:
         buf = Point(0, 0).buffer(km * 1000)  # distance in metres
         return transform(project, buf).exterior.coords.xy
 
-    def plotring(self, data,title):
+    def plotring(self, data,title, show='show'):
         """
         Plot a ring around a camera's field of view (FOV) and highlight cloud-related information.
 
@@ -319,14 +319,17 @@ class CloudOpticalDepthProcessor:
         plt.tight_layout()
         print('Distance to max cloud:', round(D,2), 'km')
         plt.subplots_adjust(top=0.85)
-        plt.show()
+        if show == 'show':
+           plt.show()
+        else:
+            plt.savefig(f'{self.imgroot}/camera/{self.camera}/{self.date_to_use}_{self.time_to_use}.png')
         return D, maxlat_2, maxlon_2
 
-    def process_file(self):
+    def process_file(self,show='show'):
         """
         Process the optical depth satellite data file and generate FOV plots.
         """
-        
+        showvar = show
         file_root = "/gws/nopw/j04/dcmex/data/GOES16pcrgd/Magda/"
         channel1 = "ABI-L2-CODC/"
         fname_root = "/OR_ABI-L2-CODC-M6_G16*_select_pcrgd.nc" 
@@ -339,7 +342,8 @@ class CloudOpticalDepthProcessor:
         rad = rad.sel(t=datetimephoto, method='nearest')
         rad = self.interp_flag16(rad)
         # Plot FOV and optical depth data
-        self.plotring(rad['var1'], f"Optical Depth Plot for {self.date_to_use}")
+        D, maxlat_2, maxlon_2 = self.plotring(rad['var1'], f"Optical Depth Plot for {self.date_to_use}", show=showvar)
+        return D, maxlat_2, maxlon_2
 
 
 def main():
