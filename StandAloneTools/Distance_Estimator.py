@@ -324,7 +324,7 @@ class CloudOpticalDepthProcessor:
         if show == 'show':
            plt.show()
         else:
-            plt.savefig(f'{self.imgroot}/camera/{self.camera}/{self.date_to_use}_{self.time_to_use}.png')
+            plt.savefig(f'{self.imgroot}/{self.camera}/{self.date_to_use}_{self.time_to_use}.png')
             plt.close('all')
         return D, maxlat_2, maxlon_2
 
