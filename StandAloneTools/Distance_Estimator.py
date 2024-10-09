@@ -292,10 +292,11 @@ class CloudOpticalDepthProcessor:
             D = 'no cloud'
             maxlat_2 = 'none'
             maxlon_2 = 'none'
+        if show == 'show':
+            for d, c in zip(distance, clourlist):
+                x, y = self.geodesic_point_buffer(camlat, camlon, d)
+                ax.plot(x, y, color=c)
         
-        for d, c in zip(distance, clourlist):
-            x, y = self.geodesic_point_buffer(camlat, camlon, d)
-            ax.plot(x, y, color=c)
 
         ax.scatter(camlon, camlat, color='r', marker='D', s=400, label='Camera')
         ax.scatter(MRO[1], MRO[0], marker='+', color='k', s=200, label='MRO')
@@ -308,16 +309,21 @@ class CloudOpticalDepthProcessor:
         ax.set_xlim(self.lon1, self.lon2)
         ax.set_ylim(self.lat1, self.lat2)
         # Add a legend
-        if self.camera=='1':
-            ax.legend(['FOV','Max optical depth', '8km', '9km', '10km', '11km', '12km',   '13km',  '14km',
-                        '15km',  '16km', '17km',  '18km', '19km', '20km', '21km',
-                        '23km', '24km', 'Camera','MRO','CB','South Baldy peak'], 
+        if show == 'show':
+            if self.camera=='1':
+                
+                ax.legend(['FOV','Max optical depth', '8km', '9km', '10km', '11km', '12km',   '13km',  '14km',
+                            '15km',  '16km', '17km',  '18km', '19km', '20km', '21km',
+                            '23km', '24km', 'Camera','MRO','CB','South Baldy peak'], 
+                            loc='upper right',bbox_to_anchor=(1.3, 1))  
+            else:   
+                ax.legend(['FOV','Max optical depth','24km', '25km', '26km', '27km', '28km', '29km', '30km',
+                        '31km',  '32km',  '33km',  '34km', '35km', '36km', '37km',
+                        '38km', '39km','Camera','MRO','CB','South Baldy peak'],
+                        loc='upper right',bbox_to_anchor=(1.3, 1))
+        else:
+            ax.legend(['FOV','Max optical depth','Camera','MRO','CB','South Baldy peak'], 
                         loc='upper right',bbox_to_anchor=(1.3, 1)) 
-        else:   
-            ax.legend(['FOV','Max optical depth','24km', '25km', '26km', '27km', '28km', '29km', '30km',
-                       '31km',  '32km',  '33km',  '34km', '35km', '36km', '37km',
-                       '38km', '39km','Camera','MRO','CB','South Baldy peak'],
-                       loc='upper right',bbox_to_anchor=(1.3, 1))
         plt.tight_layout()
         print('Distance to max cloud:', round(D,2), 'km')
         plt.subplots_adjust(top=0.85)
