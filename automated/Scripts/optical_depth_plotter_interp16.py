@@ -67,10 +67,11 @@ CT_lat = []
 CT_lon = []
 for fname in fnames:
     processor = de.CloudOpticalDepthProcessor(fname)
+    datetime_to_use = datetime.strptime(de.date_to_use+de.time_to_use, "%Y-%m-%d%H%M")
     D, maxlat_2, maxlon_2 = processor.process_file(show='save')
     # Append results to lists
     distances.append(D)
-    datetimes.append(data[0].t[i].data)
+    datetimes.append(datetime_to_use)
     CT_lat.append(maxlat_2)
     CT_lon.append(maxlon_2)
 # Create a DataFrame from the collected results and save it to a CSV file
