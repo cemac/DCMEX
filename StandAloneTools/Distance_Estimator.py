@@ -58,7 +58,7 @@ class CloudOpticalDepthProcessor:
         Initialize CloudOpticalDepthProcessor with input arguments.
         """
         self.file_name = file_name
-        self.storage = '/home/users/hburns/GWS/DCMEX/users/hburns/'
+        self.storage = '/gws/nopw/j04/dcmex/users/hburns/'
         self.dataroot = '/gws/nopw/j04/dcmex/data'
         self.yaw_error = 10
         self.optical_depth_threshold = 3.6
