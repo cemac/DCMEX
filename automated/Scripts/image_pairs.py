@@ -145,7 +145,7 @@ for file1 in os.listdir(folder1):
                     filtered_df.CB2.values[0])+' km', fontsize=16, color='k')
             except IndexError:
                 print('no box')
-            plt.title(str(timestamp1)+'\n boxed cloud image \n pitch: '+str(pitch),fontsize="20" )
+            plt.title(str(timestamp1)+'\n boxed cloud image \n pitch: '+str(pitch),fontsize="20")
             plt.subplot(1, 2, 2)
             plt.imshow(img2)
             plt.axis('off')  # Turn off axes
