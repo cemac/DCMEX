@@ -273,6 +273,9 @@ class CloudOpticalDepthProcessor:
                 print('cloud found')
         except:
             print('no cloud in area')
+            D = 'no cloud'
+            maxlat_2 = 'none'
+            maxlon_2 = 'none'
             return 
 
         orog.plot.contour(x="X", y="Y", colors='k', ax=ax,
@@ -325,7 +328,10 @@ class CloudOpticalDepthProcessor:
             ax.legend(['FOV','Max optical depth','Camera','MRO','CB','South Baldy peak'], 
                         loc='upper right',bbox_to_anchor=(1.3, 1)) 
         plt.tight_layout()
-        print('Distance to max cloud:', round(D,2), 'km')
+        try:
+            print('Distance to max cloud:', round(D,2), 'km')
+        except:
+            print(D)
         plt.subplots_adjust(top=0.85)
         if show == 'show':
            plt.show()
@@ -351,7 +357,13 @@ class CloudOpticalDepthProcessor:
         rad = rad.sel(t=datetimephoto, method='nearest')
         rad = self.interp_flag16(rad)
         # Plot FOV and optical depth data
-        D, maxlat_2, maxlon_2 = self.plotring(rad['var1'], f"Optical Depth Plot for {self.date_to_use}", show=showvar)
+        try:
+            D, maxlat_2, maxlon_2 = self.plotring(rad['var1'], f"Optical Depth Plot for {self.date_to_use}", show=showvar)
+        except TypeError:
+            print('no cloud in area')
+            D = 'none'
+            maxlat_2 ='none'
+            maxlon_2 ='none'
         return D, maxlat_2, maxlon_2
 
 
