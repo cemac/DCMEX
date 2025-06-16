@@ -264,7 +264,8 @@ for row in df_filtered.itertuples():
     df2.at[row.Index, 'MAXCTH'] = np.nanmax([CTH1, CTH2])
 
 # -------------------------------- Plots and CSV ----------------------------- #
-
+print('saving to '+storage+'/results/'+date_to_use+'/'+date_to_use+'_camera_'+str(camera)+'_cloud_top_heights.csv')
+df2.to_csv(storage+'/results/'+date_to_use+'/'+date_to_use+'_camera_'+str(camera)+'_cloud_top_heights.csv')
 # Configuring plot font size
 plt.rcParams['font.size'] = 16
 
