@@ -38,13 +38,25 @@ date_to_use = str(sys.argv[2])
 
 # outline folder structure of plots and storage/ csv location
 storage = '/home/users/hburns/GWS/DCMEX/users/hburns/'
-folder1 = storage+'images/cloud_top_heights/'+date_to_use+'/'+str(camera)+'/'
-folder2 = storage+'images/FOV_on_optical_depth/' + \
+folder1 = storage+'images2/cloud_top_heights/'+date_to_use+'/'+str(camera)+'/'
+folder2 = storage+'images2/FOV_on_optical_depth/' + \
     date_to_use+'/camera/'+str(camera)+'/'
-folder3 = storage+'images/image_pairs/'+date_to_use+'/'+str(camera)+'/'
-cloud_heights = pd.read_csv(storage+'/results/'+date_to_use +
+folder3 = storage+'images2/image_pairs/'+date_to_use+'/'+str(camera)+'/'
+cloud_heights = pd.read_csv(storage+'/results2/'+date_to_use +
                             '/'+date_to_use+'_camera_'+str(camera)
                             +'_cloud_top_heights.csv')
+
+
+# Reading camera details and cloud data
+cam_details = storage+'/camera_details.csv'
+cam_df = pd.read_csv(cam_details)
+# Processing date format
+parts = date_to_use.split('-')
+date = parts[-1]+'-'+parts[1]+'-'+parts[0]
+filtered_df = cam_df[(cam_df['Date'] == date) & (cam_df['camera'] == camera)]
+yaw_degrees = filtered_df.yaw.values[0]
+pitch = filtered_df.pitch.values[0]
+
 # Ensure folder3 exists
 if not os.path.exists(folder3):
     os.makedirs(folder3)
@@ -75,7 +87,7 @@ def extract_timestamp_folder2(filename):
     - datetime.datetime: Timestamp extracted from the filename.
     """
     timestamp_str = filename.split('.')[0]
-    return datetime.datetime.strptime(timestamp_str, '%Y-%m-%dT%H:%M')
+    return datetime.datetime.strptime(timestamp_str, '%Y-%m-%d%_H:%M')
 
 
 # Iterate through files in folder1
@@ -133,7 +145,7 @@ for file1 in os.listdir(folder1):
                     filtered_df.CB2.values[0])+' km', fontsize=16, color='k')
             except IndexError:
                 print('no box')
-            plt.title(str(timestamp1)+'\n boxed cloud image')
+            plt.title(str(timestamp1)+'\n boxed cloud image \n pitch: '+str(pitch),fontsize="20" )
             plt.subplot(1, 2, 2)
             plt.imshow(img2)
             plt.axis('off')  # Turn off axes
@@ -145,7 +157,7 @@ for file1 in os.listdir(folder1):
                           + ' km')
             except IndexError:
                 print('no box')
-                plt.title(str(timestamp_nearest)+' optical depth')
+                plt.title(str(timestamp_nearest)+' optical depth',fontsize="20")
             # Saving the figure
             plt.savefig(folder3+timestamp1.strftime('%Y-%m-%dT%H:%M')+'.png')
             plt.close('all')

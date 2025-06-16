@@ -45,9 +45,9 @@ THICKNESS = 16
 NOTSKY = 3800
 # Set file paths and directories
 storage = '/home/users/hburns/GWS/DCMEX/users/hburns/'
-imgroot = os.path.join(storage, "images/cloud_top_heights", 
+imgroot = os.path.join(storage, "images2/cloud_top_heights", 
                         date_to_use, str(camera))
-result_root = os.path.join(storage, 'results', date_to_use)
+result_root = os.path.join(storage, 'results2', date_to_use)
 dataroot = '/gws/nopw/j04/dcmex/data'
 
 # Create directories if they don't exist
@@ -55,8 +55,8 @@ if not os.path.exists(imgroot):
     # If it doesn't exist, create it
     os.makedirs(imgroot)
 
-if not os.path.exists(storage+'results/'+date_to_use+'/'):
-    os.makedirs(storage+'results/'+date_to_use+'/')
+if not os.path.exists(storage+'results2/'+date_to_use+'/'):
+    os.makedirs(storage+'results2/'+date_to_use+'/')
 
 # Read camera details from CSV
 cam_details = storage + '/camera_details.csv'
@@ -95,7 +95,7 @@ datetime_objects = [datetime.strptime(f'{date} {time[:2]}:{time[2:]}',
 
 
 # Read cloud distances CSV and convert Date_Time column to datetime
-cloud_distances = pd.read_csv(storage + '/results/' + date_to_use +
+cloud_distances = pd.read_csv(storage + '/results2/' + date_to_use +
                               '/Cloud_distnaces_camera_' + str(camera) +
                               '.csv')
 cloud_distances['Date_Time'] = pd.to_datetime(cloud_distances.Datetimes)
