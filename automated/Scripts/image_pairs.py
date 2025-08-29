@@ -87,7 +87,7 @@ def extract_timestamp_folder2(filename):
     - datetime.datetime: Timestamp extracted from the filename.
     """
     timestamp_str = filename.split('.')[0]
-    return datetime.datetime.strptime(timestamp_str, '%Y-%m-%d%_H:%M')
+    return datetime.datetime.strptime(timestamp_str, '%Y-%m-%d_%H%M')
 
 
 # Iterate through files in folder1

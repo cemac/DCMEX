@@ -19,6 +19,7 @@ Example: python calculate_heights.py 1000 2.5 30
 
 import sys
 import math
+import pandas as pd
 
 class CloudHeightCalculator:
     """
@@ -39,9 +40,22 @@ class CloudHeightCalculator:
             distance (float): Distance to the cloud in kilometers.
             pitch (float): Pitch of the camera in degrees.
         """
-        self.pixels = int(pixels)
+        self.pixels =4188- int(pixels)
         self.distance = float(distance)
         self.pitch = float(pitch)
+        self.focal_length_mm = 50.0
+        self.sensor_height_mm = 24.0
+        self.sensor_width_mm = 35.9
+        self.storage = '/gws/nopw/j04/dcmex/users/hburns'
+        self.cam_details_path = f'{self.storage}/camera_details.csv'
+        self.cam_df = pd.read_csv(self.cam_details_path)
+        # Object height on sensor =  (Sensor height (mm) × Object height (pixels))
+        #                                      / Sensor height (pixels)
+        # Sensor height (px) = Sensor height (mm) / distance between pixels
+        # sensor_height_pixels = 24*10**-3 / 5.73*10**-6
+        # sensor_height_pixels = 4188
+        self.sensor_height_pixels = 4188
+        self.calculate_fov()
 
     def calculate_height(self):
         """
@@ -53,44 +67,10 @@ class CloudHeightCalculator:
         Returns:
             float: The corrected height of the cloud.
         """
-        height_raw = self.camera.find_height(self.pixels, self.distance)
-        height_corrected = self.camera.pitch_correct(self.pitch, height_raw)
+        height_raw = self.find_height(self.pixels, self.distance)
+        height_corrected = self.pitch_correct(self.pitch, height_raw)
         return height_corrected
-
-class Camera:
-    """
-    A class to model the camera properties and operations.
-
-    Attributes:
-        focal_length_mm (float): Focal length of the camera lens in millimeters.
-        sensor_height_mm (float): Height of the camera sensor in millimeters.
-        sensor_width_mm (float): Width of the camera sensor in millimeters.
-        fov_vertical_deg (float): Vertical field of view in degrees.
-    """
-
-    def __init__(self):
-        """
-        Initialize the Camera with default properties.
-        # Camera info
-        # https://www.digicamdb.com/specs/canon_eos-6d-mark-ii/
-        #
-        # 26,200,000 photosites (pixels) on this area. distance between pixels: 5.73 µm
-        # 861.6 mm2
-        #
-        # Sensor height = 35.9 x 24 mm so 24mm high
-        # Image width x height: 6240 x 4160
-        """
-        self.focal_length_mm = 50.0
-        self.sensor_height_mm = 24.0
-        self.sensor_width_mm = 35.9
-        # Object height on sensor =  (Sensor height (mm) × Object height (pixels))
-        #                                      / Sensor height (pixels)
-        # Sensor height (px) = Sensor height (mm) / distance between pixels
-        # sensor_height_pixels = 24*10**-3 / 5.73*10**-6
-        # sensor_height_pixels = 4188
-        self.sensor_height_pixels = 4188
-        self.calculate_fov()
-
+    
     def calculate_fov(self):
         """
         Calculate the vertical field of view in degrees.
@@ -149,9 +129,14 @@ class Camera:
 if __name__ == "__main__":
     if len(sys.argv) != 4:
         print("Usage: python calculate_heights.py <pixels> <distance> <pitch>")
+        print("Example: python calculate_heights.py 888 27 14.5")
         sys.exit(1)
-
-    pixels, distance, pitch = sys.argv[1:]
+    if len(sys.argv) == 4:
+        pixels, distance, pitch = sys.argv[1:]
+    elif len(sys.argv) == 5:
+        pixels, distance, pitch, date = sys.argv[1:]
+        
     calculator = CloudHeightCalculator(pixels, distance, pitch)
     height_corrected = calculator.calculate_height()
-    print(height_corrected)
+    print(height_corrected, ' above camera')
+    print(height_corrected+1.45, ' asl')
