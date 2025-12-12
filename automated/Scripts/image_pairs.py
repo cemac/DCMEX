@@ -87,7 +87,7 @@ def extract_timestamp_folder2(filename):
     - datetime.datetime: Timestamp extracted from the filename.
     """
     timestamp_str = filename.split('.')[0]
-    return datetime.datetime.strptime(timestamp_str, '%Y-%m-%d_%H%M')
+    return datetime.datetime.strptime(timestamp_str, '%Y-%m-%d_%H%M%S')
 
 
 # Iterate through files in folder1
@@ -111,8 +111,8 @@ for file1 in os.listdir(folder1):
         if closest_file2 is not None:
             file1_path = os.path.join(folder1, file1)
             file2_path = os.path.join(folder2, closest_file2)
-            filtered_df = cloud_heights[(pd.to_datetime(
-                cloud_heights['Time']) == timestamp1)]
+            cloud_heights["Time"] = pd.to_datetime(cloud_heights["Time"])
+            filtered_df = cloud_heights.iloc[(cloud_heights["Time"] - timestamp1).abs().argmin()]
             timestamp_nearest = extract_timestamp_folder2(closest_file2)
             img1 = cv2.imread(file1_path)
             img2 = Image.open(file2_path)
@@ -123,26 +123,26 @@ for file1 in os.listdir(folder1):
             plt.imshow(img1)
             try:
                 # Plotting boxes and text for cloud top and base heights
-                plt.plot(filtered_df.W1.values[0]/2+filtered_df.X1.values[0],
-                         filtered_df.CTP1.values[0], 'o', color='r')
-                plt.text(filtered_df.W1.values[0]/2+filtered_df.X1.values[0]-100, 
-                         filtered_df.CTP1.values[0]-30, str(
-                    filtered_df.CT1.values[0])+' km', fontsize=16, color='k')
-                plt.plot(filtered_df.W1.values[0]/2+filtered_df.X1.values[0],
-                         filtered_df.CBP1.values[0], 'o', color='r')
-                plt.text(filtered_df.W1.values[0]/2+filtered_df.X1.values[0]-100,
-                         filtered_df.CBP1.values[0]+100, str(
-                    filtered_df.CB1.values[0])+' km', fontsize=16, color='k')
-                plt.plot(filtered_df.W2.values[0]/2+filtered_df.X2.values[0],
-                         filtered_df.CTP2.values[0], 'o', color='r')
-                plt.text(filtered_df.W2.values[0]/2+filtered_df.X2.values[0]-100, 
-                         filtered_df.CTP2.values[0]-30, str(
-                    filtered_df.CT2.values[0])+' km', fontsize=16, color='k')
-                plt.plot(filtered_df.W2.values[0]/2+filtered_df.X2.values[0],
-                         filtered_df.CBP2.values[0], 'o', color='r')
-                plt.text(filtered_df.W2.values[0]/2+filtered_df.X2.values[0]-100, 
-                         filtered_df.CBP2.values[0]+100, str(
-                    filtered_df.CB2.values[0])+' km', fontsize=16, color='k')
+                plt.plot(filtered_df.W1/2+filtered_df.X1,
+                         filtered_df.CTP1, 'o', color='r')
+                plt.text(filtered_df.W1/2+filtered_df.X1-100, 
+                         filtered_df.CTP1-30, str(
+                    filtered_df.CT1)+' km', fontsize=16, color='k')
+                plt.plot(filtered_df.W1/2+filtered_df.X1,
+                         filtered_df.CBP1, 'o', color='r')
+                plt.text(filtered_df.W1/2+filtered_df.X1-100,
+                         filtered_df.CBP1+100, str(
+                    filtered_df.CB1)+' km', fontsize=16, color='k')
+                plt.plot(filtered_df.W2/2+filtered_df.X2,
+                         filtered_df.CTP2, 'o', color='r')
+                plt.text(filtered_df.W2/2+filtered_df.X2-100, 
+                         filtered_df.CTP2-30, str(
+                    filtered_df.CT2)+' km', fontsize=16, color='k')
+                plt.plot(filtered_df.W2/2+filtered_df.X2,
+                         filtered_df.CBP2, 'o', color='r')
+                plt.text(filtered_df.W2/2+filtered_df.X2-100, 
+                         filtered_df.CBP2+100, str(
+                    filtered_df.CB2)+' km', fontsize=16, color='k')
             except IndexError:
                 print('no box')
             plt.title(str(timestamp1)+'\n boxed cloud image \n pitch: '+str(pitch),fontsize="20")
@@ -153,11 +153,13 @@ for file1 in os.listdir(folder1):
                 # Adding title for the right subplot
                 plt.title(str(timestamp_nearest)+
                           ' optical depth \n Distance to Cloud: ' +
-                          str(int(filtered_df.distance_to_cloud.values[0])) 
+                          str(int(filtered_df.distance_to_cloud)) 
                           + ' km')
             except IndexError:
                 print('no box')
                 plt.title(str(timestamp_nearest)+' optical depth',fontsize="20")
             # Saving the figure
-            plt.savefig(folder3+timestamp1.strftime('%Y-%m-%dT%H:%M')+'.png')
+            plt.savefig(folder3+timestamp1.strftime('%Y-%m-%dT%H:%M:%S')+'.png')
             plt.close('all')
+
+

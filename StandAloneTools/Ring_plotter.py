@@ -73,6 +73,7 @@ class CloudOpticalDepthProcessor:
         self.date_fnames,self.date_to_use, self.time_to_use,self.camera = self.extract_file_metadata()
         self.imgroot = str(self.storage + "images2/FOV_on_optical_depth/" +
                            self.date_to_use+'/camera/')
+        self.distance=[23,24,25,26]
         sensor_height_mm = 24.0
         sensor_width_mm = 35.9
 
@@ -256,12 +257,7 @@ class CloudOpticalDepthProcessor:
         CB = [34.0248532, -106.9267249]
         clourlist = ['whitesmoke', 'gray', 'khaki', 'steelblue', 'seagreen',
                      'aqua', 'orchid', 'firebrick', 'w', 'k', 'y', 'b', 'g', 'c', 'm', 'r']
-        if self.camera == '2':
-            distance = [24, 25, 26, 27, 28,   29,  30,
-                        31,  32,  33,  34, 35, 36, 37, 38, 39]
-        else:   
-            distance = [8, 9, 10, 11, 12,   13,  14,
-                        15,  16,  17,  18, 19, 20, 21, 23, 24]
+        clourlist = clourlist[0:len(self.distance)]
         day1 = data.values
         lons = data.coords['lon'].values
         lats = data.coords['lat'].values
@@ -298,7 +294,7 @@ class CloudOpticalDepthProcessor:
             maxlat_2 = 'none'
             maxlon_2 = 'none'
         if show == 'show':
-            for d, c in zip(distance, clourlist):
+            for d, c in zip(self.distance, clourlist):
                 x, y = self.geodesic_point_buffer(camlat, camlon, d)
                 ax.plot(x, y, color=c)
         
@@ -322,9 +318,7 @@ class CloudOpticalDepthProcessor:
                             '23km', '24km', 'Camera','MRO','CB','South Baldy peak'], 
                             loc='upper right',bbox_to_anchor=(1.3, 1))  
             else:   
-                ax.legend(['FOV','Max optical depth','24km', '25km', '26km', '27km', '28km', '29km', '30km',
-                        '31km',  '32km',  '33km',  '34km', '35km', '36km', '37km',
-                        '38km', '39km','Camera','MRO','CB','South Baldy peak'],
+                ax.legend(['FOV','Max optical depth','23km','24km', '25km', '26km','Camera','MRO','CB','South Baldy peak'],
                         loc='upper right',bbox_to_anchor=(1.3, 1))
         else:
             ax.legend(['FOV','Max optical depth','Camera','MRO','CB','South Baldy peak'], 
@@ -360,7 +354,7 @@ class CloudOpticalDepthProcessor:
         rad = self.interp_flag16(rad)
         # Plot FOV and optical depth data
         try:
-            D, maxlat_2, maxlon_2 = self.plotring(rad['var1'], f"Optical Depth Plot for {self.date_to_use}", show=showvar)
+            D, maxlat_2, maxlon_2 = self.plotring(rad['var1'], f"Optical Depth Plot for {self.date_to_use} \n {self.time_to_use}", show=showvar)
         except TypeError:
             print('no cloud in area')
             D = 'none'
