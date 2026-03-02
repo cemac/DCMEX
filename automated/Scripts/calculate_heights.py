@@ -8,7 +8,7 @@ python: 3.8 Jasmin NERC servers
 project: DCMEX
 
 Description
-
+-
 Usage: python     calculate_heights.py <camera> <date>
 where
 camera : interger 1 or 2
@@ -43,7 +43,7 @@ parts = date_to_use.split('-')
 date = parts[-1]+'-'+parts[1]+'-'+parts[0]
 
 # File storage path
-storage = '/home/users/hburns/GWS/DCMEX/users/hburns/'
+storage = '/gws/ssde/j25a/dcmex/users/hburns/DCMEX/'
 
 # Camera info
 # https://www.digicamdb.com/specs/canon_eos-6d-mark-ii/
@@ -169,19 +169,19 @@ cloud_pixels = pd.read_csv(storage + '/results/' + date_to_use +
                            '/cloud_pixels_camera_' + str(camera) + '.csv')
 
 # Formatting date and time
-date_format_distances = '%Y-%m-%dT%H:%M:%S'
-date_format_pixels = '%Y-%m-%dT%H%M%S'
+date_format_distances = '%Y-%m-%d %H:%M:%S'
+date_format_pixels = '%Y-%m-%d%H%M%S'
 date_object_distances = datetime.strptime(
     cloud_distances.Datetimes.iloc[0].split('.')[0], date_format_distances)
 date_object_pixels = datetime.strptime(
-    date_to_use+'T'+str(cloud_pixels.Times.iloc[0]), date_format_pixels)
+    date_to_use+str(cloud_pixels.Times.iloc[0]), date_format_pixels)
 
 # Adding Date_Time columns to DataFrames
 cloud_distances['Date_Time'] = pd.to_datetime(cloud_distances.Datetimes)
 cloud_pixels['Date_Time'] = ''
 for index, row in cloud_pixels.iterrows():
     cloud_pixels['Date_Time'].iloc[index] = datetime.strptime(
-        date_to_use+'T'+str(cloud_pixels.Times.iloc[index]),
+        date_to_use+str(cloud_pixels.Times.iloc[index]),
         date_format_pixels)
 
 # Matching cloud distances to corresponding pixels
@@ -204,7 +204,9 @@ for index, row in cloud_pixels.iterrows():
     # Load images and create a subplot
     if closest_file2 is not None:
         cloud_pixels['Distance'].iloc[index] = closest_file2.Distance
-
+    else:
+        print(timestamp1)
+        print(timestamp2)
 
 # Filtering cloud dataframe based on distance criteria
 try:
@@ -222,7 +224,7 @@ df_filtered = cloud_pixels[~condition]
 df_filtered = df_filtered.reset_index(drop=True)
 df2 = pd.DataFrame(index=range(len(df_filtered)), columns=[
                    'Time', 'distance_to_cloud', 'CT1', 'CT2', 'CB1', 'CB2',
-                   'CTP1', 'CTP2', 'CBP1', 'CTBP2', 'W1', 'W2', 'X1', 'X2',
+                   'CTP1', 'CTP2', 'CBP1', 'CBP2', 'W1', 'W2', 'X1', 'X2',
                    'MAXCTH'])
 
 # Processing cloud data to calculate heights and distances
@@ -264,8 +266,8 @@ for row in df_filtered.itertuples():
     df2.at[row.Index, 'MAXCTH'] = np.nanmax([CTH1, CTH2])
 
 # -------------------------------- Plots and CSV ----------------------------- #
-print('saving to '+storage+'/results2/'+date_to_use+'/'+date_to_use+'_camera_'+str(camera)+'_cloud_top_heights.csv')
-df2.to_csv(storage+'/results2/'+date_to_use+'/'+date_to_use+'_camera_'+str(camera)+'_cloud_top_heights.csv')
+print('saving to '+storage+'/results/'+date_to_use+'/'+date_to_use+'_camera_'+str(camera)+'_cloud_top_heights.csv')
+df2.to_csv(storage+'/results/'+date_to_use+'/'+date_to_use+'_camera_'+str(camera)+'_cloud_top_heights.csv')
 # Configuring plot font size
 plt.rcParams['font.size'] = 16
 

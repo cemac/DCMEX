@@ -33,12 +33,12 @@ import sys
 camera = int(sys.argv[1])
 date_to_use = str(sys.argv[2])
 # Path to area to write images and results to
-storage = '/home/users/hburns/GWS/DCMEX/users/hburns/'
+storage = '/gws/ssde/j25a/dcmex/users/hburns/'
 # Path to write created images
 imgroot = str(storage + "images/FOV_on_optical_depth/" +
               date_to_use+'/camera/'+str(camera)+'/')
 # Path to optical depth data
-dataroot = '/gws/nopw/j04/dcmex/data'
+dataroot = '/gws/ssde/j25a/dcmex/data'
 
 # YAW Error (our measured YAW's don't look too acurate )
 yaw_error = 10
@@ -105,12 +105,13 @@ lat2 = 34.25
 lon1 = -107.5
 lon2 = -106.8
 
-file_root = "/gws/nopw/j04/dcmex/data/GOES16pcrgd/Magda/"
+file_root = "/gws/ssde/j25a/dcmex/data/GOES16pcrgd/Magda/"
 channel1 = "ABI-L2-CODC/"
 fname_root = "/*/OR_ABI-L2-CODC-M6_G16*_select_pcrgd.nc"
 
 # Orography file
-orog_file = '/gws/nopw/j04/dcmex/users/dfinney/data/globe_orog_data_NM.nc'
+
+orog_file = '/gws/ssde/j25a/dcmex/users/dfinney/data/globe_orog_data_NM.nc'
 orog = xr.open_dataset(orog_file)['topo'].sel(
     X=slice(lon1, lon2), Y=slice(lat1, lat2))
 southbaldy = [33.99, -107.19]

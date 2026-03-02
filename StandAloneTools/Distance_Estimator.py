@@ -60,8 +60,8 @@ class CloudOpticalDepthProcessor:
         Initialize CloudOpticalDepthProcessor with input arguments.
         """
         self.file_name = file_name
-        self.storage = '/gws/nopw/j04/dcmex/users/hburns/'
-        self.dataroot = '/gws/nopw/j04/dcmex/data'
+        self.storage = '/gws/ssde/j25a/dcmex/users/hburns/DCMEX'
+        self.dataroot = '/gws/ssde/j25a/dcmex/data'
         self.yaw_error = 10
         self.optical_depth_threshold = 3.6
         self.cam_details_path = f'{self.storage}/camera_details.csv'
@@ -71,7 +71,7 @@ class CloudOpticalDepthProcessor:
         self.lon1 = -107.5
         self.lon2 = -106.8
         self.date_fnames,self.date_to_use, self.time_to_use,self.camera = self.extract_file_metadata()
-        self.imgroot = str(self.storage + "images2/FOV_on_optical_depth/" +
+        self.imgroot = str(self.storage + "/images/FOV_on_optical_depth/" +
                            self.date_to_use+'/camera/')
         sensor_height_mm = 24.0
         sensor_width_mm = 35.9
@@ -98,7 +98,7 @@ class CloudOpticalDepthProcessor:
         yyyy, mm, dd, hhmmss = parts[3], parts[4], parts[5], parts[6]
         date_time = datetime.strptime(f'{yyyy}-{mm}-{dd}-{hhmmss}', "%Y-%m-%d-%H%M%S")
         camera = parts[2]
-        return date_time.strftime("%d-%m-%Y"), date_time.strftime("%Y-%m-%d"), date_time.strftime("%H%M"), camera
+        return date_time.strftime("%d-%m-%Y"), date_time.strftime("%Y-%m-%d"), date_time.strftime("%H%M%S"), camera
 
     def load_camera_details(self):
         """
@@ -248,7 +248,7 @@ class CloudOpticalDepthProcessor:
                                     3.6, 9.4, 23, 60, 100],
                                     cbar_kwargs={'label': 'optical depth'})
         # Orography file
-        orog_file = '/gws/nopw/j04/dcmex/users/dfinney/data/globe_orog_data_NM.nc'
+        orog_file = '/gws/ssde/j25a/dcmex/users/dfinney/data/globe_orog_data_NM.nc'
         orog = xr.open_dataset(orog_file)['topo'].sel(
             X=slice(self.lon1, self.lon2), Y=slice(self.lat1, self.lat2))
         southbaldy = [33.99, -107.19]
@@ -291,6 +291,12 @@ class CloudOpticalDepthProcessor:
             ax.scatter(lons[maxlon_2], lats[maxlat_2], marker='x',
                     color='r', s=400, label='Max optical depth')
             D = hs.haversine((lats[maxlat_2], lons[maxlon_2]), (camlat, camlon))
+            if D<8:
+                print('no cloud over mountain')
+                D = 'no cloud'
+                maxlat_2 = 'none'
+                maxlon_2 = 'none'      
+                return D, maxlat_2, maxlon_2
 
         except:
             print('no cloud in FOV')
@@ -347,15 +353,15 @@ class CloudOpticalDepthProcessor:
         Process the optical depth satellite data file and generate FOV plots.
         """
         showvar = show
-        file_root = "/gws/nopw/j04/dcmex/data/GOES16pcrgd/Magda/"
+        file_root = "/gws/ssde/j25a/dcmex/data/GOES16pcrgd/Magda/"
         channel1 = "ABI-L2-CODC/"
         fname_root = "/OR_ABI-L2-CODC-M6_G16*_select_pcrgd.nc" 
         # Load satellite data
         date_path = self.date_to_use.replace('-', '/', 3)
-        rad = xr.open_mfdataset(glob.glob(file_root + channel1 + date_path + '/'+self.time_to_use[0:2]+fname_root),combine="nested", 
+        rad = xr.open_mfdataset(sorted(glob.glob(file_root + channel1 + date_path + '/'+self.time_to_use[0:2]+fname_root)),combine="nested", 
                                  concat_dim="t").sel(lon=slice(self.lon1, self.lon2),
                                                                        lat=slice(self.lat1, self.lat2))
-        datetimephoto = datetime.strptime(self.date_to_use+self.time_to_use, "%Y-%m-%d%H%M")
+        datetimephoto = datetime.strptime(self.date_to_use+self.time_to_use, "%Y-%m-%d%H%M%S")
         rad = rad.sel(t=datetimephoto, method='nearest')
         rad = self.interp_flag16(rad)
         # Plot FOV and optical depth data

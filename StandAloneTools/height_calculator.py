@@ -46,7 +46,7 @@ class CloudHeightCalculator:
         self.focal_length_mm = 50.0
         self.sensor_height_mm = 24.0
         self.sensor_width_mm = 35.9
-        self.storage = '/gws/nopw/j04/dcmex/users/hburns'
+        self.storage = '/gws/ssde/j25a/dcmex/users/hburns'
         self.cam_details_path = f'{self.storage}/camera_details.csv'
         self.cam_df = pd.read_csv(self.cam_details_path)
         # Object height on sensor =  (Sensor height (mm) × Object height (pixels))

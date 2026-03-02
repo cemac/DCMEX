@@ -37,12 +37,12 @@ date_to_use = str(sys.argv[2])
 
 
 # outline folder structure of plots and storage/ csv location
-storage = '/home/users/hburns/GWS/DCMEX/users/hburns/'
-folder1 = storage+'images2/cloud_top_heights/'+date_to_use+'/'+str(camera)+'/'
-folder2 = storage+'images2/FOV_on_optical_depth/' + \
+storage = '/gws/ssde/j25a/dcmex/users/hburns/DCMEX/'
+folder1 = storage+'images/cloud_top_heights/'+date_to_use+'/'+str(camera)+'/'
+folder2 = storage+'images/FOV_on_optical_depth/' + \
     date_to_use+'/camera/'+str(camera)+'/'
-folder3 = storage+'images2/image_pairs/'+date_to_use+'/'+str(camera)+'/'
-cloud_heights = pd.read_csv(storage+'/results2/'+date_to_use +
+folder3 = storage+'images/image_pairs/'+date_to_use+'/'+str(camera)+'/'
+cloud_heights = pd.read_csv(storage+'/results/'+date_to_use +
                             '/'+date_to_use+'_camera_'+str(camera)
                             +'_cloud_top_heights.csv')
 
@@ -105,8 +105,7 @@ for file1 in os.listdir(folder1):
                     (timestamp1 - timestamp2).total_seconds())
                 if time_difference < closest_time_difference:
                     closest_time_difference = time_difference
-                    closest_file2 = file2
-
+                    closest_file2 = file2 
         # Load images and create a subplot
         if closest_file2 is not None:
             file1_path = os.path.join(folder1, file1)

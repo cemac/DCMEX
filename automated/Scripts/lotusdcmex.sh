@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=dcmex0731
+#SBATCH --job-name=dcmex
 #SBATCH --partition=standard
 #SBATCH --qos=high
 #SBATCH --time=12:00:00
@@ -12,19 +12,19 @@
 conda activate DCMEX
 
 # Define the list of date strings (space-separated)
-dates=("2022-07-31")
+dates=("2022-07-18" "2022-07-19" "2022-07-20" "2022-07-22" "2022-07-23" "2022-07-24" "2022-07-25" "2022-07-26")
 
 # Loop over each date
 for date in "${dates[@]}"; do
   # Loop over both cameras
-  for camera in 2; do
+  for camera in 1 2; do
     echo "Processing $date for $camera"
     echo 'Creating optical depth plots and distance csv'
-    #python optical_depth_plotter_interp16.py $camera $date
+    python optical_depth_plotter_interp16.py $camera $date
     echo 'Finding the cloud edges in photos and creating pixel csv'
-    #python cloudtop_pixel_heights.py $camera $date
+    python cloudtop_pixel_heights.py $camera $date
     echo 'Calulating cloud top heights and creating timeseries csv'
-    #python calculate_heights.py $camera $date
+    python calculate_heights.py $camera $date
     echo 'Creating image pairs of boxed clouds and optical depth'
     python image_pairs.py $camera $date
   done

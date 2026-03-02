@@ -21,19 +21,19 @@ import os
 import pandas as pd
 import sys
 from datetime import datetime
-sys.path.append(os.path.abspath("/gws/nopw/j04/dcmex/users/hburns/DCMEX/StandAloneTools/"))
+sys.path.append(os.path.abspath("/gws/ssde/j25a/dcmex/users/hburns/DCMEX/StandAloneTools/"))
 import Distance_Estimator as de
 
 # Extract arguments
 camera = int(sys.argv[1])
 date_to_use = str(sys.argv[2])
 # Path to area to write images and results to
-storage = '/gws/nopw/j04/dcmex/users/hburns/'
+storage = '/gws/ssde/j25a/dcmex/users/hburns/DCMEX'
 # Path to write created images
-imgroot = str(storage + "images2/FOV_on_optical_depth/" +
+imgroot = str(storage + "/images/FOV_on_optical_depth/" +
               date_to_use+'/camera/'+str(camera)+'/')
 # Path to optical depth data
-dataroot = '/gws/nopw/j04/dcmex/data'
+dataroot = '/gws/ssde/j25a/dcmex/data'
 
 # YAW Error (our measured YAW's don't look too acurate )
 yaw_error = 10
@@ -51,8 +51,8 @@ if not os.path.exists(imgroot):
     # If it doesn't exist, create it
     os.makedirs(imgroot)
 
-if not os.path.exists(storage+'results2/'+date_to_use+'/'):
-    os.makedirs(storage+'results2/'+date_to_use+'/')
+if not os.path.exists(storage+'/results/'+date_to_use+'/'):
+    os.makedirs(storage+'/results/'+date_to_use+'/')
 
 # Select file names based on camera and date
 if camera == 2:
@@ -68,7 +68,7 @@ CT_lat = []
 CT_lon = []
 for fname in fnames:
     processor = de.CloudOpticalDepthProcessor(fname)
-    datetime_to_use = datetime.strptime(processor.date_to_use+processor.time_to_use, "%Y-%m-%d%H%M")
+    datetime_to_use = datetime.strptime(processor.date_to_use+processor.time_to_use, "%Y-%m-%d%H%M%S")
     D, maxlat_2, maxlon_2 = processor.process_file(show='save')
     # Append results to lists
     distances.append(D)
@@ -80,5 +80,5 @@ cloud_distances = pd.DataFrame(
     {'Datetimes': datetimes, 'Distance': distances, 'CT_lat': CT_lat,
      'CT_lon': CT_lon})
 cloud_distances.to_csv(
-    storage + 'results2/' + date_to_use + '/Cloud_distnaces_camera_'
+    storage + '/results/' + date_to_use + '/Cloud_distnaces_camera_'
     + str(camera) + '.csv')
