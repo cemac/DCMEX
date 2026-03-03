@@ -19,10 +19,10 @@ This repository is part of the [Deep Convective Microphysics Experiment (DCMEX)]
 The code here attempts to automatically detect the cloud base and top height from timelapse photography using:
 
 1. Optical cloud depth to estimate distance to max cloud thickness
-2. Open CV edge detection to estimate cloud top location in image
-3. Thin Lens equations to use lens information, pixel information and distance information to give a pitch corrected cloud top height estimate
+2. OpenCV edge detection to estimate cloud top location in the image
+3. Thin Lens equations to use lens information, pixel information and distance information to give a pitch-corrected cloud top height estimate
 
-All the methodology is outlined in the [DCMEX wiki](https://github.com/cemac/DCMEX/wiki)
+All the methodology is outlined in the [DCMEX wiki](https://github.com/cemac/DCMEX/wiki). Follow-up work was done automatically, calculating cloud top heights from aircraft-mounted cameras in [DCMEX2](https://github.com/cemac/DCMEX)
 
 # DCMEX - StandAlone Tools.
 
@@ -32,14 +32,14 @@ We also provide standalone tools:
 
 1. `height_calculator.py` 
 2. `cloud_boxer.py` given a photo returns a picture with the cloud boxed and pixel number returned
-3. `distance_estimator.py` given a photo will return a plot with the corresponding optical depth 
+3. `distance_estimator.py` given a photo, will return a plot with the corresponding optical depth 
 
-more information on these tools can be found on the [stand alone tools wiki](https://github.com/cemac/DCMEX/wiki/Stand-Alone-Tools)
+More information on these tools can be found on the [stand-alone tools wiki](https://github.com/cemac/DCMEX/wiki/Stand-Alone-Tools)
 
 
 # Requirements
 
-python requirements are provided in the DCMEX.yml file
+Python requirements are provided in the DCMEX.yml file
 
 
 # Documentation
