@@ -14,7 +14,7 @@
 
 # DCMEX - Automated Measuring of cloud height.
 
-This repository is part of the [Deep Convective Microphysics Experiment (DCMEX)](https://cloudsense.ac.uk/dcmex/) project.
+This repository is part of the Deep Convective Microphysics Experiment (DCMEX) project.
 
 The code here attempts to automatically detect the cloud base and top height from timelapse photography using:
 
